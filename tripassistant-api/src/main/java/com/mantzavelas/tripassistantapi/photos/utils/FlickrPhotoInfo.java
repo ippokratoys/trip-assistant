@@ -53,6 +53,21 @@ public class FlickrPhotoInfo {
     public FlickrPhotoInfo() {
     }
 
+    public FlickrPhotoInfo(String id, String secret, String server, int farm, String dateUploaded, int rotation, String originalSecret, String originalFormat, String title, String description, String latitude, String longitude) {
+        this.id = id;
+        this.secret = secret;
+        this.server = server;
+        this.farm = farm;
+        this.dateUploaded = dateUploaded;
+        this.rotation = rotation;
+        this.originalSecret = originalSecret;
+        this.originalFormat = originalFormat;
+        this.title = title;
+        this.description = description;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
     public String getId() {
         return id;
     }

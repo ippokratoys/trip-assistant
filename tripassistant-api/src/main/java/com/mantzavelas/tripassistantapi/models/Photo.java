@@ -30,6 +30,17 @@ public class Photo {
     public Photo() {
     }
 
+    public Photo(Long id, String title, String description, int rotation, Date dateUploaded, String url, String latitude, String longitude) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.rotation = rotation;
+        this.dateUploaded = dateUploaded;
+        this.url = url;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
     public Long getId() {
         return id;
     }

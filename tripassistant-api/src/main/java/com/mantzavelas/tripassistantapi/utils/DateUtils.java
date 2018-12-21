@@ -11,17 +11,6 @@ public class DateUtils {
         return Long.toString(unixTime);
     }
 
-    public static Date getNextYear(Date date) {
-        return getDateFromYearMonthDate(date.getYear()+1, date.getMonth(), date.getDate());
-    }
-
-    public static Date getDateFromYearMonthDate(int year, int month, int date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month, date);
-
-        return calendar.getTime();
-    }
-
     public static Date addSecondsToDate(Date date, int secondsToAdd) {
         if (date!=null) {
             Calendar calendar = Calendar.getInstance();

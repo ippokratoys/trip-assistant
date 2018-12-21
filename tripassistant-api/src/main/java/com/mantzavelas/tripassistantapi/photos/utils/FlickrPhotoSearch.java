@@ -28,6 +28,18 @@ public class FlickrPhotoSearch {
     public FlickrPhotoSearch() {
     }
 
+    public FlickrPhotoSearch(String id, String owner, String secret, String server, String farm, String title, int isPublic, int isFriend, int isFamily) {
+        this.id = id;
+        this.owner = owner;
+        this.secret = secret;
+        this.server = server;
+        this.farm = farm;
+        this.title = title;
+        this.isPublic = isPublic;
+        this.isFriend = isFriend;
+        this.isFamily = isFamily;
+    }
+
     public String getId() {
         return id;
     }

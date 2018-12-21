@@ -20,6 +20,14 @@ public class FlickrPhotosSearch {
     public FlickrPhotosSearch() {
     }
 
+    public FlickrPhotosSearch(int page, int pages, int perPage, String total, List<FlickrPhotoSearch> photo) {
+        this.page = page;
+        this.pages = pages;
+        this.perPage = perPage;
+        this.total = total;
+        this.photo = photo;
+    }
+
     public int getPage() {
         return page;
     }

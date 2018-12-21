@@ -13,93 +13,124 @@ import org.apache.commons.math3.ml.clustering.DoublePoint;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class PhotoService {
 
-    private List<Photo> photoList = new ArrayList<>();
     private int currentPage = 1;
-    private int totalPages;
+
     private PhotoInfoToPhotoConverter converter = new PhotoInfoToPhotoConverter();
-    private PhotoRepository photoRepository = BeanUtil.getBean(PhotoRepository.class);
-    private PopularPlaceRepository placeRepository = BeanUtil.getBean(PopularPlaceRepository.class);
+    private PhotoRepository photoRepository;
+    private PopularPlaceRepository placeRepository;
+    private FlickrRestClient flickrRestClient;
+
+    public PhotoService() {
+        photoRepository = BeanUtil.getBean(PhotoRepository.class);
+        placeRepository = BeanUtil.getBean(PopularPlaceRepository.class);
+        flickrRestClient = FlickrRestClient.create();
+    }
+
+    public PhotoService(PhotoRepository photoRepository, PopularPlaceRepository placeRepository, FlickrRestClient client) {
+        this.photoRepository = photoRepository;
+        this.placeRepository = placeRepository;
+        this.flickrRestClient = client;
+    }
 
     public void persistPhotosFromFlickr() throws InterruptedException {
         Date startDate = photoRepository.findTheLatestPhoto();
 
-        FlickrSearchResponse photos = FlickrRestClient.create().searchPhotosFrom(DateUtils.addSecondsToDate(startDate,1));
-        totalPages = photos.getPhotos().getPages();
+        FlickrSearchResponse photos = flickrRestClient.searchPhotosFrom(DateUtils.addSecondsToDate(startDate,1));
+        int totalPages = (photos!=null && photos.getPhotos()!=null) ? photos.getPhotos().getPages() : 0;
 
-        if(!photos.getPhotos().getPhoto().isEmpty()) {
+        if(!isPhotoResponseEmptyOrNull(photos)) {
             while (currentPage <= totalPages) {
                 currentPage = photos.getPhotos().getPage();
 
-                photoList = photos.getPhotos()
-                        .getPhoto()
-                        .stream()
-                        .map(getPhotoInfoMapper())
-                        .map(converter::convert)
-                        .filter(Objects::nonNull)
-                        .sorted(Comparator.comparing(Photo::getDateUploaded))
-                        .collect(Collectors.toList());
+                List<Photo> photosToAdd = photos.getPhotos()
+                    .getPhoto()
+                    .stream()
+                    .map(getPhotoInfoMapper())
+                    .map(converter::convert)
+                    .filter(Objects::nonNull)
+                    .sorted(Comparator.comparing(Photo::getDateUploaded))
+                    .collect(Collectors.toList());
 
-                Photo latestPhoto = photoList.get(0);
+                Photo latestPhoto = photosToAdd.get(0);
 
                 if (photoRepository.findByUrl(latestPhoto.getUrl()).isPresent()) {
                     break;
                 }
 
-                photoRepository.saveAll(photoList);
+                photoRepository.saveAll(photosToAdd);
 
-                Thread.sleep(120000);
+                Thread.sleep(120000); //sleep for 2 mins as flickr cannot handle several thousands of sequential requests.
 
                 currentPage++;
-                photos = FlickrRestClient.create().searchPhotosFrom(startDate, Integer.toString(currentPage));
+                photos = flickrRestClient.searchPhotosFrom(startDate, Integer.toString(currentPage));
             }
         }
+    }
 
-        System.out.println("Exited PhotoService");
+    public boolean isPhotoResponseEmptyOrNull(FlickrSearchResponse photos) {
+        return photos==null || photos.getPhotos()==null
+            || photos.getPhotos().getPhoto()==null || photos.getPhotos().getPhoto().isEmpty();
     }
 
     private Function<FlickrPhotoSearch, FlickrPhotoInfo> getPhotoInfoMapper() {
-        return photoSearch -> FlickrRestClient.create()
-                .getPhotoInfo(photoSearch.getId())
-                .getPhoto();
+        return photoSearch -> flickrRestClient.getPhotoInfo(photoSearch.getId())
+                                              .getPhoto();
     }
 
     public void clusterPhotosBasedOnLocation() {
         List<Photo> photos = photoRepository.findAll();
-        List<DoublePoint> points = getDoublePointsFromPhotoLatLon(photos);
 
-        List<Cluster<DoublePoint>> originalClusters = executeAlgorithm(points, 4, 0.0001953125);
-        List<Cluster<DoublePoint>> clustersToRecluster = originalClusters.stream().filter(cl -> cl.getPoints().size() > photos.size()* 0.1).collect(Collectors.toList());
-        originalClusters.removeAll(clustersToRecluster);
+        if(!photos.isEmpty()) {
+            List<DoublePoint> points = getDoublePointsFromPhotoLatLon(photos);
 
-        while(!clustersToRecluster.isEmpty() && clustersToRecluster.stream().anyMatch(c -> c.getPoints().size() > photos.size()*0.1)) {
-            List<DoublePoint> pointsToAdd = new ArrayList<>();
-            if (!clustersToRecluster.isEmpty()) {
-                for (Cluster cluster : clustersToRecluster) {
-                    for (Object clusterPoint : cluster.getPoints()) {
-                        double[] latLon = ((DoublePoint) clusterPoint).getPoint();
-                        DoublePoint newDoublePoint = new DoublePoint(latLon);
-                        pointsToAdd.add(newDoublePoint);
+            List<Cluster<DoublePoint>> firstClusteringResult = executeAlgorithm(points, 4, 0.0001953125);
+            List<Cluster<DoublePoint>> clustersToRecluster;
+
+            do{
+                clustersToRecluster = firstClusteringResult.stream()
+                    .filter(getBigClusterFilter(photos))
+                    .collect(Collectors.toList());
+
+                if (!clustersToRecluster.isEmpty()) {
+                    List<DoublePoint> pointsToAdd = new ArrayList<>();
+
+                    for (Cluster cluster : clustersToRecluster) {
+                        for (Object clusterPoint : cluster.getPoints()) {
+                            double[] latLon = ((DoublePoint) clusterPoint).getPoint();
+                            DoublePoint newDoublePoint = new DoublePoint(latLon);
+                            pointsToAdd.add(newDoublePoint);
+                        }
                     }
+
+                    List<Cluster<DoublePoint>> newClusterResult = executeAlgorithm(pointsToAdd, 2, 0.00001);
+
+                    if(newClusterResult.isEmpty()) {
+                        break;
+                    }
+                    firstClusteringResult.removeAll(clustersToRecluster); //remove the clusters which will got reclustered.
+                    firstClusteringResult.addAll(newClusterResult);
                 }
-            }
-            List<Cluster<DoublePoint>> newClusterResult = executeAlgorithm(pointsToAdd, 2, 0.00001);
-            originalClusters.addAll(newClusterResult);
-            clustersToRecluster = newClusterResult.stream().filter(cl -> cl.getPoints().size() > photos.size()* 0.1).collect(Collectors.toList());
-            originalClusters.removeAll(clustersToRecluster);
+            } while (!clustersToRecluster.isEmpty() && clustersToRecluster.stream().anyMatch(getBigClusterFilter(photos)));
+
+            firstClusteringResult.sort((o1, o2) -> o2.getPoints().size() - o1.getPoints().size());
+
+            List<PopularPlace> popularPlaces = firstClusteringResult.stream()
+                    .limit(10)
+                    .map(clusterToPlaceMapper())
+                    .collect(Collectors.toList());
+
+            saveTop10PlacesFrom(popularPlaces);
         }
+    }
 
-        originalClusters.sort((o1, o2) -> o2.getPoints().size() - o1.getPoints().size());
-
-        List<PopularPlace> popularPlaces = originalClusters.stream()
-                .limit(10)
-                .map(clusterToPlaceMapper())
-                .collect(Collectors.toList());
-
-        keepTop10PlacesInDB(popularPlaces);
+    private Predicate<Cluster<DoublePoint>> getBigClusterFilter(List<Photo> photos) {
+        //check if cluster has more points than 10% of the total photos. if so, recluster this one.
+        return cl -> cl.getPoints().size() > photos.size() * 0.1;
     }
 
     private Function<Cluster<DoublePoint>, PopularPlace> clusterToPlaceMapper() {
@@ -112,17 +143,19 @@ public class PhotoService {
             return place; };
     }
 
-    public void keepTop10PlacesInDB(List<PopularPlace> popularPlaces) {
-        placeRepository.deleteAll();
-        placeRepository.saveAll(popularPlaces);
+    private void saveTop10PlacesFrom(List<PopularPlace> popularPlaces) {
+        if(!popularPlaces.isEmpty()) {
+            placeRepository.deleteAll();
+            placeRepository.saveAll(popularPlaces);
+        }
     }
 
-    public List<Cluster<DoublePoint>> executeAlgorithm(List<DoublePoint> points, int minPts, double eps) {
+    private List<Cluster<DoublePoint>> executeAlgorithm(List<DoublePoint> points, int minPts, double eps) {
         DBSCANClusterer clusterer = new DBSCANClusterer(eps, minPts);
         return clusterer.cluster(points);
     }
 
-    public List<DoublePoint> getDoublePointsFromPhotoLatLon(List<Photo> photos) {
+    private List<DoublePoint> getDoublePointsFromPhotoLatLon(List<Photo> photos) {
         return photos.stream()
                      .map(photo -> {
                          double[] latLon = new double[2];

@@ -23,6 +23,14 @@ public class PopularPlace {
     public PopularPlace() {
     }
 
+    public PopularPlace(Long id, String latitude, String longitude, String name, Integer timesMentioned) {
+        this.id = id;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.name = name;
+        this.timesMentioned = timesMentioned;
+    }
+
     public Long getId() {
         return id;
     }

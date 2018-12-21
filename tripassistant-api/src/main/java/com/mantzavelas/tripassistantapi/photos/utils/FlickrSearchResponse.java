@@ -11,6 +11,11 @@ public class FlickrSearchResponse {
 
     public FlickrSearchResponse() { }
 
+    public FlickrSearchResponse(FlickrPhotosSearch photos, String status) {
+        this.photos = photos;
+        this.status = status;
+    }
+
     public FlickrPhotosSearch getPhotos() {
         return photos;
     }
