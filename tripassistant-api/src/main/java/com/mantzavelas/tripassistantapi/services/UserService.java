@@ -37,11 +37,12 @@ public class UserService {
             throw new BadRequestException(String.format("Username %s is already in use.", user.getUsername()));
         }
 
+        String rawPassword = user.getPassword();
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
 
         //After successfull signup, sign in the user
-        UserCredentials userCredentials = new UserCredentials(user.getUsername(), user.getPassword());
+        UserCredentials userCredentials = new UserCredentials(user.getUsername(), rawPassword);
         return signIn(userCredentials);
     }
 
