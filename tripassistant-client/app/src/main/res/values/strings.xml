@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">TripAssistant</string>
+    <string name="title_activity_popular_places">Popular Places</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_search">Search</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+
+    <string name="nav_item_home">Home</string>
+    <string name="nav_item_popular">Popular Places</string>
+    <string name="nav_item_settings">Settings</string>
+
+    <!-- navigation drawer item labels  -->
+    <string-array name="nav_drawer_labels">
+        <item>@string/nav_item_home</item>
+        <item>@string/nav_item_popular</item>
+        <item>@string/nav_item_settings</item>
+    </string-array>
+
+    <string name="title_home">Home</string>
+    <string name="title_popular">Popular Places</string>
+    <string name="title_settings">Settings</string>
+    <string name="login_button">Login</string>
+    <string name="register_button">Register</string>
+    <string name="app_displayName">TripAssistant</string>
+    <string name="password">Password</string>
+    <string name="username">Username</string>
+    <string name="last_name">Last Name</string>
+    <string name="first_name">First Name</string>
+
+</resources>
