@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".activities.RegisterFragment"
+    android:id="@+id/register_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#303030">
+
+    <TextView
+        android:id="@+id/register_appname_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:text="@string/app_displayName"
+        android:fontFamily="@font/billabong"
+        android:textSize="36sp"
+        android:textColor="@color/textColorPrimary" />
+
+    <EditText
+        android:id="@+id/register_firstname_editText"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/register_appname_textView"
+        android:layout_marginTop="70dp"
+        android:background="#55000000"
+        android:hint="@string/first_name"
+        android:padding="16dp"
+        android:textColorHint="@color/textColorPrimary"
+        android:textColor="@color/textColorPrimary"
+        android:inputType="textAutoComplete"/>
+
+    <EditText
+        android:id="@+id/register_lastname_editText"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/register_firstname_editText"
+        android:layout_marginTop="10dp"
+        android:background="#55000000"
+        android:hint="@string/last_name"
+        android:padding="16dp"
+        android:textColorHint="@color/textColorPrimary"
+        android:textColor="@color/textColorPrimary"
+        android:inputType="textAutoComplete"/>
+
+    <EditText
+        android:id="@+id/register_username_editText"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/register_lastname_editText"
+        android:layout_marginTop="10dp"
+        android:background="#55000000"
+        android:hint="@string/username"
+        android:padding="16dp"
+        android:textColorHint="@color/textColorPrimary"
+        android:textColor="@color/textColorPrimary"
+        android:inputType="text"/>
+
+    <EditText
+        android:id="@+id/register_password_editText"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/register_username_editText"
+        android:layout_marginTop="10dp"
+        android:background="#55000000"
+        android:hint="@string/password"
+        android:padding="16dp"
+        android:textColorHint="@color/textColorPrimary"
+        android:textColor="@color/textColorPrimary"
+        android:inputType="textPassword"/>
+
+    <Button
+        android:id="@+id/register_register_btn"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:text="@string/register_button"
+        android:textColor="@color/textColorPrimary"
+        android:background="@color/colorPrimary"
+        android:padding="16dp"/>
+
+</RelativeLayout>
