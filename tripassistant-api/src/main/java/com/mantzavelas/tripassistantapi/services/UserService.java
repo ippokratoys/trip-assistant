@@ -1,16 +1,17 @@
 package com.mantzavelas.tripassistantapi.services;
 
-import com.mantzavelas.tripassistantapi.exceptions.BadRequestException;
+import com.mantzavelas.tripassistantapi.converters.UserResourceToUserConverter;
+import com.mantzavelas.tripassistantapi.exceptions.UsernameAlreadyInUseException;
 import com.mantzavelas.tripassistantapi.models.User;
 import com.mantzavelas.tripassistantapi.models.UserCredentials;
 import com.mantzavelas.tripassistantapi.repositories.UserRepository;
+import com.mantzavelas.tripassistantapi.resources.UserResource;
 import com.mantzavelas.tripassistantapi.security.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,31 +19,31 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    private final PasswordEncoder passwordEncoder;
-
     private final AuthenticationManager authenticationManager;
 
     private final JwtTokenProvider tokenProvider;
 
+    private final UserResourceToUserConverter converter;
+
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtTokenProvider tokenProvider) {
+    public UserService(UserRepository userRepository, AuthenticationManager authenticationManager, JwtTokenProvider tokenProvider, UserResourceToUserConverter converter) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;
+        this.converter = converter;
     }
 
-    public String signUp(User user) {
-        if(userRepository.existsByUsername(user.getUsername())) {
-            throw new BadRequestException(String.format("Username %s is already in use.", user.getUsername()));
+    public String signUp(UserResource userResource) {
+        if (userRepository.existsByUsername(userResource.getUsername())) {
+            throw new UsernameAlreadyInUseException(String.format("Username %s is already in use.", userResource.getUsername()));
         }
 
-        String rawPassword = user.getPassword();
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        String rawPassword = userResource.getPassword();
+        User newUser = converter.convert(userResource);
+        userRepository.save(newUser);
 
         //After successfull signup, sign in the user
-        UserCredentials userCredentials = new UserCredentials(user.getUsername(), rawPassword);
+        UserCredentials userCredentials = new UserCredentials(userResource.getUsername(), rawPassword);
         return signIn(userCredentials);
     }
 

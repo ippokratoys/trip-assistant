@@ -1,8 +1,8 @@
 package com.mantzavelas.tripassistantapi.controllers;
 
 import com.mantzavelas.tripassistantapi.dtos.AuthTokenDto;
-import com.mantzavelas.tripassistantapi.models.User;
 import com.mantzavelas.tripassistantapi.models.UserCredentials;
+import com.mantzavelas.tripassistantapi.resources.UserResource;
 import com.mantzavelas.tripassistantapi.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,8 +22,8 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public AuthTokenDto signUp(@RequestBody User user) {
-        return new AuthTokenDto(userService.signUp(user));
+    public AuthTokenDto signUp(@RequestBody UserResource resource) {
+        return new AuthTokenDto(userService.signUp(resource));
     }
 
     @PostMapping("/signin")
