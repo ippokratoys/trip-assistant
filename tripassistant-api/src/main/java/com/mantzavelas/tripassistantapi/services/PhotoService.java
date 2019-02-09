@@ -21,6 +21,7 @@ public class PhotoService {
     private int currentPage = 1;
 
     private PhotoInfoToPhotoConverter converter = new PhotoInfoToPhotoConverter();
+
     private PhotoRepository photoRepository;
     private PopularPlaceRepository placeRepository;
     private FlickrRestClient flickrRestClient;
@@ -72,7 +73,7 @@ public class PhotoService {
         }
     }
 
-    public boolean isPhotoResponseEmptyOrNull(FlickrSearchResponse photos) {
+    private boolean isPhotoResponseEmptyOrNull(FlickrSearchResponse photos) {
         return photos==null || photos.getPhotos()==null
             || photos.getPhotos().getPhoto()==null || photos.getPhotos().getPhoto().isEmpty();
     }

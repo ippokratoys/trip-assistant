@@ -1,5 +1,6 @@
 package com.mantzavelas.tripassistantapi;
 
+import com.mantzavelas.tripassistantapi.services.CategoryTaggingThread;
 import com.mantzavelas.tripassistantapi.services.PhotoServiceThread;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,5 +22,7 @@ public class TripassistantApiApplication extends SpringBootServletInitializer {
 
 		Thread photoServiceThread = new Thread(new PhotoServiceThread());
 		photoServiceThread.start();
+		Thread categoryTagging = new Thread(new CategoryTaggingThread());
+		categoryTagging.start();
 	}
 }
