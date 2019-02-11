@@ -3,6 +3,7 @@ package com.mantzavelas.tripassistantapi.photos.utils;
 import com.mantzavelas.tripassistantapi.photos.AbstractRestClient;
 import com.mantzavelas.tripassistantapi.photos.IntervalType;
 import com.mantzavelas.tripassistantapi.utils.DateUtils;
+import com.mantzavelas.tripassistantapi.utils.PropertyUtil;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -13,8 +14,8 @@ import java.util.Optional;
 
 public class FlickrRestClient extends AbstractRestClient {
 
-    private static final String apiKey = "52b8a1fd11d996198fd55d11853f1a0b";
-    private static final String secret = "06c2706f36b96d35";
+    private static final String apiKey = PropertyUtil.getProperty("apiClient.flickr.apiKey");
+    private static final String secret = PropertyUtil.getProperty("apiClient.flickr.secret");
 
     private static FlickrRestClient instance;
     public static FlickrRestClient create() {

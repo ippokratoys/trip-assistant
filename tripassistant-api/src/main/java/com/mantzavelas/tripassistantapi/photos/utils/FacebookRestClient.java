@@ -4,12 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mantzavelas.tripassistantapi.photos.AbstractRestClient;
 import com.mantzavelas.tripassistantapi.photos.IntervalType;
+import com.mantzavelas.tripassistantapi.utils.PropertyUtil;
 import org.springframework.web.util.UriComponentsBuilder;
 
 public class FacebookRestClient extends AbstractRestClient {
 
-    private static final String clientId = "330473747566297";
-    private static final String appSecret = "5426cd78718ed831468393f694448fba";
+    private static final String clientId = PropertyUtil.getProperty("apiClient.facebook.clientId");
+    private static final String appSecret = PropertyUtil.getProperty("apiClient.facebook.secret");
 
     private FacebookRestClient() {}
 
