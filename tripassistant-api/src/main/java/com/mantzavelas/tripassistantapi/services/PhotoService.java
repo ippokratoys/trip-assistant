@@ -65,8 +65,6 @@ public class PhotoService {
 
                 photoRepository.saveAll(photosToAdd);
 
-                Thread.sleep(120000); //sleep for 2 mins as flickr cannot handle several thousands of sequential requests.
-
                 currentPage++;
                 photos = flickrRestClient.searchPhotosFrom(startDate, Integer.toString(currentPage));
             }
