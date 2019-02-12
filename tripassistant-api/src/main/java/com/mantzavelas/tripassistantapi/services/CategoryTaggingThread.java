@@ -6,6 +6,7 @@ import com.mantzavelas.tripassistantapi.photos.utils.DataMuseRestClient;
 import com.mantzavelas.tripassistantapi.photos.utils.RelativeWord;
 import com.mantzavelas.tripassistantapi.repositories.PhotoCategoryRepository;
 import com.mantzavelas.tripassistantapi.utils.BeanUtil;
+import com.mantzavelas.tripassistantapi.utils.DateUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,25 +14,39 @@ import java.util.stream.Collectors;
 
 public class CategoryTaggingThread implements Runnable{
 
+    private static int TAGGING_THREAD_INTERVAL = DateUtils.hoursToMs(12);
+
     private PhotoCategoryRepository repository;
 
     private DataMuseRestClient restClient;
 
+    private TaggingService taggingService;
+
     public CategoryTaggingThread() {
         repository = BeanUtil.getBean(PhotoCategoryRepository.class);
         restClient = DataMuseRestClient.create();
+        taggingService = new TaggingService();
     }
 
-    public CategoryTaggingThread(PhotoCategoryRepository repository, DataMuseRestClient restClient) {
-        this.repository = repository;
-        this.restClient = restClient;
-    }
+	public CategoryTaggingThread(PhotoCategoryRepository repository, DataMuseRestClient restClient, TaggingService taggingService) {
+		this.repository = repository;
+		this.restClient = restClient;
+		this.taggingService = taggingService;
+	}
 
-    @Override
+	@Override
     public void run() {
-        persistCategoriesWithTags();
+    	while (true) {
+			persistCategoriesWithTags();
 
-        new TaggingService().categorizePhotos();
+			taggingService.categorizePhotos();
+
+			try {
+				Thread.sleep(TAGGING_THREAD_INTERVAL);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
     }
 
     private void persistCategoriesWithTags() {
