@@ -14,11 +14,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.mantzavelas.tripassistant.R;
-import com.mantzavelas.tripassistant.models.User;
 import com.mantzavelas.tripassistant.models.CurrentUser;
-import com.mantzavelas.tripassistant.restservices.resources.UserResource;
 import com.mantzavelas.tripassistant.restservices.RestClient;
 import com.mantzavelas.tripassistant.restservices.TripAssistantService;
+import com.mantzavelas.tripassistant.restservices.resources.UserResource;
 
 import java.io.IOException;
 
@@ -96,7 +95,8 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                     return false;
                 }
 
-                CurrentUser.create(new User(userResource.getFirstName(), userResource.getLastName(), userResource.getUsername(), authToken));
+                CurrentUser.setRegisteredUser(userResource.getFirstName(), userResource.getLastName()
+                        , userResource.getUsername(), authToken);
                 return true;
             }
 

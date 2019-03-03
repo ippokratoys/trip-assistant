@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_centerHorizontal="true">
+
+
+    <TextView
+        android:id="@+id/search_distance_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:textAlignment="center"
+        android:text="Search places near:" />
+
+    <NumberPicker
+        android:id="@+id/search_distance_picker"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_below="@+id/search_distance_textview" />
+
+    <TextView
+        android:id="@+id/search_category_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/search_distance_picker"
+        android:layout_marginTop="30dp"
+        android:textAlignment="center"
+        android:text="Select category:" />
+
+    <NumberPicker
+        android:id="@+id/search_category_picker"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_below="@+id/search_category_textview"
+        android:showDividers="middle"/>
+
+
+</RelativeLayout>
