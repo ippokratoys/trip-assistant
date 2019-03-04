@@ -2,12 +2,8 @@ package com.mantzavelas.tripassistantapi.photos.utils;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
 public class RestCall<T,R> {
-
-    private static RestTemplate restTemplate = new RestTemplate();
 
     private String url;
 
@@ -30,12 +26,17 @@ public class RestCall<T,R> {
         this.clazz = clazz;
     }
 
+    public String getUrl() { return url; }
     public void setUrl(String url) {
         this.url = url;
     }
 
-    public ResponseEntity<R> call() {
-        return restTemplate.exchange(url, httpMethod, requestEntity, clazz);
-    }
+    public HttpMethod getHttpMethod() { return httpMethod; }
+    public void setHttpMethod(HttpMethod httpMethod) { this.httpMethod = httpMethod; }
 
+    public HttpEntity<T> getRequestEntity() { return requestEntity; }
+    public void setRequestEntity(HttpEntity<T> requestEntity) { this.requestEntity = requestEntity; }
+
+    public Class<R> getClazz() { return clazz; }
+    public void setClazz(Class<R> clazz) { this.clazz = clazz; }
 }

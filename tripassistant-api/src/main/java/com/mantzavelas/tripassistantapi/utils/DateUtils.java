@@ -22,4 +22,25 @@ public class DateUtils {
 
         return null;
     }
+
+    public static int daysToMs(int days) {
+    	return hoursToMs(24 * days);
+	}
+
+	public static int hoursToMs(int hours) {
+    	return minsToMs(60 * hours);
+	}
+
+	public static int minsToMs(int minutes) {
+    	return secsToMs(60 * minutes);
+	}
+
+	public static int secsToMs(int seconds) {
+    	return 1000* seconds;
+	}
+
+	public static void main(String[] args) {
+    	int result = daysToMs(1);
+    	System.out.println(result);
+	}
 }

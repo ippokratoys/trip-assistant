@@ -14,12 +14,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.mantzavelas.tripassistant.R;
-import com.mantzavelas.tripassistant.models.User;
-import com.mantzavelas.tripassistant.restservices.resources.UserCredentialResource;
 import com.mantzavelas.tripassistant.models.CurrentUser;
-import com.mantzavelas.tripassistant.restservices.dtos.UserTokenDto;
+import com.mantzavelas.tripassistant.models.User;
 import com.mantzavelas.tripassistant.restservices.RestClient;
 import com.mantzavelas.tripassistant.restservices.TripAssistantService;
+import com.mantzavelas.tripassistant.restservices.dtos.UserTokenDto;
+import com.mantzavelas.tripassistant.restservices.resources.UserCredentialResource;
 
 import java.io.IOException;
 
@@ -85,7 +85,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                     response = service.login(resource).execute();
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Toast.makeText(getActivity(), "Login Failed", Toast.LENGTH_LONG).show();
                     return false;
                 }
 
@@ -96,7 +95,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 User user = new User();
                 user.setUsername(strings[0]);
                 user.setAccessToken(response.body().getAuthToken());
-                CurrentUser.create(user);
+                CurrentUser.setLoggedInUser(user.getUsername(), user.getAccessToken());
                 return true;
             }
 
@@ -108,6 +107,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             super.onPostExecute(aBoolean);
             if(aBoolean) {
                 Toast.makeText(getActivity(), "Successfully logged in", Toast.LENGTH_SHORT).show();
+                getFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.container_body, new HomeFragment(), "HomeFragment")
+                        .commit();
                 getFragmentManager().popBackStack();
                 return;
             }

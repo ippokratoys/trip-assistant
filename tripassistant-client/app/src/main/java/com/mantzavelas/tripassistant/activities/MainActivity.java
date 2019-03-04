@@ -74,10 +74,14 @@ public class MainActivity extends AppCompatActivity implements IFragmentDrawerLi
                 title = getString(R.string.title_home);
                 break;
             case 1:
+                fragment = new SearchPlaceFragment();
+                title = getString(R.string.title_search);
+                break;
+            case 2:
                 fragment = new PopularPlacesFragment();
                 title = getString(R.string.title_popular);
                 break;
-            case 2:
+            case 3:
                 fragment = new SettingsFragment();
                 title = getString(R.string.title_settings);
                 break;

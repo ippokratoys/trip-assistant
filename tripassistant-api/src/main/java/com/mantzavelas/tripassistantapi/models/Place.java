@@ -1,12 +1,11 @@
 package com.mantzavelas.tripassistantapi.models;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(indexes = {@Index(name = "photo_dateuploaded", columnList = "dateUploaded")})
-public class Photo {
+public class Place {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,37 +16,27 @@ public class Photo {
     @Column(columnDefinition = "text")
     private String description;
 
-    private int rotation;
-
-    @Temporal(value = TemporalType.TIMESTAMP)
-    private Date dateUploaded;
-
-    private String url;
-
     private String latitude;
 
     private String longitude;
 
+    private int visits;
+
     @ManyToMany
     @JoinTable(
-        name = "photo_categories",
-        joinColumns = @JoinColumn(name = "photo_id"),
+        name = "place_categories",
+        joinColumns = @JoinColumn(name = "place_id"),
         inverseJoinColumns = @JoinColumn(name = "categories_id")
     )
     private List<PhotoCategory> categories;
 
-    public Photo() {
-    }
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> photoUrls;
 
-    public Photo(Long id, String title, String description, int rotation, Date dateUploaded, String url, String latitude, String longitude) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.rotation = rotation;
-        this.dateUploaded = dateUploaded;
-        this.url = url;
-        this.latitude = latitude;
-        this.longitude = longitude;
+    @Enumerated(EnumType.STRING)
+    private City city;
+
+    public Place() {
     }
 
     public Long getId() { return id; }
@@ -58,21 +47,29 @@ public class Photo {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    public int getRotation() { return rotation; }
-    public void setRotation(int rotation) { this.rotation = rotation; }
-
-    public Date getDateUploaded() { return dateUploaded; }
-    public void setDateUploaded(Date dateUploaded) { this.dateUploaded = dateUploaded; }
-
-    public String getUrl() { return url; }
-    public void setUrl(String url) { this.url = url; }
-
     public String getLatitude() { return latitude; }
     public void setLatitude(String latitude) { this.latitude = latitude; }
 
     public String getLongitude() { return longitude; }
     public void setLongitude(String longitude) { this.longitude = longitude; }
 
+    public int getVisits() { return visits; }
+    public void setVisits(int visits) { this.visits = visits; }
+    public void incrementVisits() { visits++; }
+
     public List<PhotoCategory> getCategories() { return categories; }
     public void setCategories(List<PhotoCategory> categories) { this.categories = categories; }
+
+    public List<String> getPhotoUrls() { return photoUrls; }
+    public void setPhotoUrls(List<String> photoUrls) { this.photoUrls = photoUrls; }
+    public void addPhoto(String url) {
+        if (photoUrls == null) {
+            photoUrls = new ArrayList<>();
+        }
+
+        photoUrls.add(url);
+    }
+
+    public City getCity() { return city; }
+    public void setCity(City city) { this.city = city; }
 }

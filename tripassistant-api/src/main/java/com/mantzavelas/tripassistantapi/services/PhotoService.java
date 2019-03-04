@@ -21,6 +21,7 @@ public class PhotoService {
     private int currentPage = 1;
 
     private PhotoInfoToPhotoConverter converter = new PhotoInfoToPhotoConverter();
+
     private PhotoRepository photoRepository;
     private PopularPlaceRepository placeRepository;
     private FlickrRestClient flickrRestClient;
@@ -64,15 +65,13 @@ public class PhotoService {
 
                 photoRepository.saveAll(photosToAdd);
 
-                Thread.sleep(120000); //sleep for 2 mins as flickr cannot handle several thousands of sequential requests.
-
                 currentPage++;
                 photos = flickrRestClient.searchPhotosFrom(startDate, Integer.toString(currentPage));
             }
         }
     }
 
-    public boolean isPhotoResponseEmptyOrNull(FlickrSearchResponse photos) {
+    private boolean isPhotoResponseEmptyOrNull(FlickrSearchResponse photos) {
         return photos==null || photos.getPhotos()==null
             || photos.getPhotos().getPhoto()==null || photos.getPhotos().getPhoto().isEmpty();
     }

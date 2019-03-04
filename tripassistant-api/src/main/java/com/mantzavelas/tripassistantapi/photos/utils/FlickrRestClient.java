@@ -1,6 +1,9 @@
 package com.mantzavelas.tripassistantapi.photos.utils;
 
+import com.mantzavelas.tripassistantapi.photos.AbstractRestClient;
+import com.mantzavelas.tripassistantapi.photos.IntervalType;
 import com.mantzavelas.tripassistantapi.utils.DateUtils;
+import com.mantzavelas.tripassistantapi.utils.PropertyUtil;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -9,14 +12,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class FlickrRestClient {
+public class FlickrRestClient extends AbstractRestClient {
 
-    private static final String apiKey = "52b8a1fd11d996198fd55d11853f1a0b";
-    private static final String secret = "06c2706f36b96d35";
-    private static final String baseUrl = "https://api.flickr.com/services/rest";
+    private static final String apiKey = PropertyUtil.getProperty("apiClient.flickr.apiKey");
+    private static final String secret = PropertyUtil.getProperty("apiClient.flickr.secret");
 
     private static FlickrRestClient instance;
-
     public static FlickrRestClient create() {
         if (instance == null) {
             instance = new FlickrRestClient();
@@ -56,7 +57,7 @@ public class FlickrRestClient {
 
         searchPhotos.setUrl(url.build());
 
-        return searchPhotos.call().getBody();
+        return call(searchPhotos.getUrl(), searchPhotos.getHttpMethod(), null, searchPhotos.getClazz());
 
     }
 
@@ -68,7 +69,22 @@ public class FlickrRestClient {
 
         getPhotoInfo.setUrl(finalUrl);
 
-        return getPhotoInfo.call().getBody();
+        return call(getPhotoInfo.getUrl(), getPhotoInfo.getHttpMethod(), null, getPhotoInfo.getClazz());
+    }
+
+    @Override
+    public String baseUrl() {
+        return "https://api.flickr.com/services/rest";
+    }
+
+    @Override
+    public IntervalType interval() {
+        return IntervalType.HOURLY;
+    }
+
+    @Override
+    public int callsPerInterval() {
+        return 3600;
     }
 
     class FlickrUrlHelper {
@@ -76,9 +92,9 @@ public class FlickrRestClient {
         private UriComponentsBuilder paramBuilder;
 
         //Need to add standard params needed in flickr calls
-        public FlickrUrlHelper(String flickrMethod) {
+        FlickrUrlHelper(String flickrMethod) {
             params = new HashMap<>();
-            paramBuilder = UriComponentsBuilder.fromHttpUrl(baseUrl);
+            paramBuilder = UriComponentsBuilder.fromHttpUrl(baseUrl());
 
             params.put("format","json");
             params.put("nojsoncallback", "1");
@@ -86,13 +102,13 @@ public class FlickrRestClient {
             params.put("api_key", apiKey);
         }
 
-        public FlickrUrlHelper withParam(String key, String value) {
+        FlickrUrlHelper withParam(String key, String value) {
             params.put(key, value);
 
             return this;
         }
 
-        public String build() {
+        String build() {
             params.forEach((key,value) -> paramBuilder.queryParam(key, value));
 
             return paramBuilder.toUriString();
