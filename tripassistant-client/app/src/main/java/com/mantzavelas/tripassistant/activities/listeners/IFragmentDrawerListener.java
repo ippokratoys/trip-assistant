@@ -1,4 +1,4 @@
-package com.mantzavelas.tripassistant.activities;
+package com.mantzavelas.tripassistant.activities.listeners;
 
 import android.view.View;
 
