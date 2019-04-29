@@ -11,17 +11,45 @@ public class DateUtils {
         return Long.toString(unixTime);
     }
 
+    public static Date addDaysToDate(Date date, int days) {
+    	return addToDate(date,days, 0, 0, 0);
+	}
+
     public static Date addSecondsToDate(Date date, int secondsToAdd) {
-        if (date!=null) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(date);
-            calendar.add(Calendar.SECOND, secondsToAdd);
-
-            return calendar.getTime();
-        }
-
-        return null;
+        return addToDate(date, 0, 0, 0, secondsToAdd);
     }
+
+	public static Date addToDate(Date date, int days, int hours, int minutes, int secondsToAdd) {
+		if (date!=null) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(date);
+			if (days > 0) {
+				calendar.add(Calendar.DATE, days);
+			}
+
+			if (hours > 0) {
+				calendar.add(Calendar.HOUR, hours);
+			}
+
+			if (minutes > 0) {
+				calendar.add(Calendar.MINUTE, minutes);
+			}
+
+			if (secondsToAdd > 0) {
+				calendar.add(Calendar.SECOND, secondsToAdd);
+			}
+
+			return calendar.getTime();
+		}
+
+		return null;
+	}
+
+	public static boolean isDateWithinAWeek(Date date) {
+    	Date aWeekAhead = addDaysToDate(new Date(), 7);
+
+    	return !date.after(aWeekAhead);
+	}
 
     public static int daysToMs(int days) {
     	return hoursToMs(24 * days);
@@ -42,5 +70,8 @@ public class DateUtils {
 	public static void main(String[] args) {
     	int result = daysToMs(1);
     	System.out.println(result);
+
+    	Date result2 = addDaysToDate(new Date(), 3);
+		System.out.println(result2);
 	}
 }

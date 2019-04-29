@@ -2,8 +2,11 @@ package com.mantzavelas.tripassistantapi.converters;
 
 import com.mantzavelas.tripassistantapi.dtos.PlaceDto;
 import com.mantzavelas.tripassistantapi.models.Place;
+import com.mantzavelas.tripassistantapi.utils.StringUtil;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
+
+import java.util.stream.Collectors;
 
 @Component
 public class PlaceToPlaceDtoConverter implements Converter<Place, PlaceDto> {
@@ -17,7 +20,10 @@ public class PlaceToPlaceDtoConverter implements Converter<Place, PlaceDto> {
 		dto.setLatitude(source.getLatitude());
 		dto.setLongitude(source.getLongitude());
 		dto.setVisits(source.getVisits());
-		dto.setPhotoUrls(source.getPhotoUrls());
+		dto.setPhotoUrls(source.getPhotoUrls()
+							   .stream()
+							   .map(s -> StringUtil.removeSequentialDuplicateChars("\\.", s))
+				 			   .collect(Collectors.toList()));
 
 		return dto;
 	}
