@@ -22,8 +22,11 @@ public class TripsFragment extends Fragment {
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
+    private TripPagesStrategies strategies;
+
     public TripsFragment() {
         super();
+        strategies = new TripPagesStrategies();
     }
 
     @Override
@@ -43,8 +46,12 @@ public class TripsFragment extends Fragment {
         viewPager = view.findViewById(R.id.trip_pager);
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
-        adapter.addFragment("All Trips", new AllTripsFragment());
-        adapter.addFragment("Upcoming Trips", new UpComingTripsFragment());
+        for (TripPages pageName : TripPages.values()) {
+            TripPageStrategy strategy = strategies.getTripPageStrategy(pageName.getName());
+            if (strategy != null) {
+                adapter.addFragment(strategy.getFragmentPage().getTitle(), strategy.getFragmentPage());
+            }
+        }
         viewPager.setAdapter(adapter);
 
         tabLayout.setupWithViewPager(viewPager);

@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import com.mantzavelas.tripassistant.R;
 import com.mantzavelas.tripassistant.activities.listeners.IClickListener;
 import com.mantzavelas.tripassistant.activities.listeners.IFragmentDrawerListener;
+import com.mantzavelas.tripassistant.activities.listeners.RecyclerTouchListener;
 import com.mantzavelas.tripassistant.adapters.NavigationDrawerAdapter;
 import com.mantzavelas.tripassistant.models.NavDrawerItem;
 

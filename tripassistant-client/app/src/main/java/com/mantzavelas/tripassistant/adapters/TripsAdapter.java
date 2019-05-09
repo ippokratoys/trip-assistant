@@ -29,10 +29,6 @@ public class TripsAdapter extends RecyclerView.Adapter<TripsAdapter.TripViewHold
     private static final String DATE_SCHEDULED_TOKEN = "Date Scheduled: ";
     private static final String TOTAL_PLACES_TOKEN = "Places: ";
 
-    public TripsAdapter(List<TripDto> trips) {
-        this.trips = trips;
-    }
-
     public TripsAdapter(List<TripDto> trips, RecyclerViewClickListener listener) {
         this.trips = trips;
         this.listener = listener;

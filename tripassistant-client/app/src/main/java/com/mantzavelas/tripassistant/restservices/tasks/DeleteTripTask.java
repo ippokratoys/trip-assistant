@@ -1,5 +1,6 @@
 package com.mantzavelas.tripassistant.restservices.tasks;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
@@ -22,12 +23,20 @@ public class DeleteTripTask extends AsyncTask<TripDto, Void, Map<Response, TripD
     private WeakReference<Context> context;
     private NotifyDataSetChanged dataSetChangedListener;
     private List<TripDto> tripDtos;
+    private boolean needsTermination;
+
+    public DeleteTripTask(Context context) {
+        this.context = new WeakReference<>(context);
+    }
 
     public DeleteTripTask(Context context, NotifyDataSetChanged dataSetChangedListener, List<TripDto> tripDtos) {
         this.context = new WeakReference<>(context);
         this.dataSetChangedListener = dataSetChangedListener;
         this.tripDtos = tripDtos;
     }
+
+    public boolean isNeedsTermination() { return needsTermination; }
+    public void setNeedsTermination(boolean needsTermination) { this.needsTermination = needsTermination; }
 
     @Override
     protected Map<Response, TripDto> doInBackground(TripDto... tripDtos) {
@@ -52,9 +61,26 @@ public class DeleteTripTask extends AsyncTask<TripDto, Void, Map<Response, TripD
                 Toast.makeText(cont, "Failed to delete trip " + responses.get(response).getTitle(), Toast.LENGTH_SHORT).show();
                 return;
             }
-            tripDtos.remove(responses.get(response));
+            if (tripDtos != null && !tripDtos.isEmpty()) {
+                tripDtos.remove(responses.get(response));
+            }
         }
 
-        dataSetChangedListener.onDataSetChanged(tripDtos);
+        if (dataSetChangedListener != null) {
+            dataSetChangedListener.onDataSetChanged(tripDtos);
+        }
+
+        terminate();
+    }
+
+    private void terminate() {
+        if (!needsTermination) {
+            return;
+        }
+
+        Context cont = context.get();
+        if (cont instanceof Activity) {
+            ((Activity)cont).finish();
+        }
     }
 }
