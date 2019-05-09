@@ -52,7 +52,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
 
     private void hideLoginButtons() {
-        if(loginButton != null && registerButton != null && CurrentUser.isLoggedIn()) {
+        if(loginButton != null && registerButton != null && CurrentUser.getInstance().isLoggedIn()) {
             loginButton.setVisibility(View.INVISIBLE);
             registerButton.setVisibility(View.INVISIBLE);
         }

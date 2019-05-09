@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
@@ -26,6 +27,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.mantzavelas.tripassistant.R;
+import com.mantzavelas.tripassistant.activities.helpers.NotLoggedInAlertDialog;
 import com.mantzavelas.tripassistant.models.CurrentUser;
 import com.mantzavelas.tripassistant.restservices.RestClient;
 import com.mantzavelas.tripassistant.restservices.TripAssistantService;
@@ -82,7 +84,7 @@ public class SearchPlaceFragment extends Fragment implements OnMapReadyCallback 
             return;
         }
 
-        if (!CurrentUser.isLoggedIn()) {
+        if (!CurrentUser.getInstance().isLoggedIn()) {
             NotLoggedInAlertDialog dialog = new NotLoggedInAlertDialog(getContext(), getFragmentManager());
             dialog.create("You have to be logged-in in order to search for places around you!" +
                     "\nClick on Login to log-in or click on Cancel to go to the previous screen");
@@ -103,6 +105,10 @@ public class SearchPlaceFragment extends Fragment implements OnMapReadyCallback 
                 , Manifest.permission.ACCESS_COARSE_LOCATION)) {
             try {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+                if (CurrentUser.getInstance().getLatitude() == null || CurrentUser.getInstance().getLongitude() == null) {
+                    Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    CurrentUser.getInstance().setUserLocation(Double.toString(location.getLatitude()), Double.toString(location.getLongitude()));
+                }
             } catch (SecurityException e) {
                 e.printStackTrace();
             }
@@ -220,8 +226,8 @@ public class SearchPlaceFragment extends Fragment implements OnMapReadyCallback 
 
         @Override
         protected Void doInBackground(Void... voids) {
-            String lat = CurrentUser.getLatitude();
-            String lon = CurrentUser.getLongitude();
+            String lat = CurrentUser.getInstance().getLatitude();
+            String lon = CurrentUser.getInstance().getLongitude();
 
             params.put("lat", lat != null ? lat : "1");
             params.put("lon", lon != null ? lon : "1");

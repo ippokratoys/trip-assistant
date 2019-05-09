@@ -17,14 +17,14 @@ public class AuthorizationInterceptor implements Interceptor {
     @Override
     public Response intercept(@NonNull Chain chain) throws IOException {
 
-        if (!CurrentUser.isLoggedIn()) {
+        if (!CurrentUser.getInstance().isLoggedIn()) {
             Log.e("retrofit 2","Authorization header is already present or token is empty....");
             return chain.proceed(chain.request());
         }
 
         Request authorizedRequest = chain.request()
                 .newBuilder()
-                .addHeader("Authorization", CurrentUser.retrieveAccessTokenWithBearer())
+                .addHeader("Authorization", CurrentUser.getInstance().retrieveAccessTokenWithBearer())
                 .build();
 
         return chain.proceed(authorizedRequest);

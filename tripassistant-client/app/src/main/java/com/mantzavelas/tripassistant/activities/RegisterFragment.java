@@ -95,7 +95,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                     return false;
                 }
 
-                CurrentUser.setRegisteredUser(userResource.getFirstName(), userResource.getLastName()
+                CurrentUser.getInstance().setRegisteredUser(userResource.getFirstName(), userResource.getLastName()
                         , userResource.getUsername(), authToken);
                 return true;
             }

@@ -12,7 +12,7 @@ public class LocationListenerImpl implements LocationListener {
         String lat = Double.toString(location.getLatitude());
         String lon = Double.toString(location.getLongitude());
 
-        CurrentUser.setUserLocation(lat, lon);
+        CurrentUser.getInstance().setUserLocation(lat, lon);
     }
 
     @Override

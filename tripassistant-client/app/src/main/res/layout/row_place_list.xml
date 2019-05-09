@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/row_padding_vertical"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/row_padding_vertical">
+
+    <TextView
+        android:id="@+id/row_place_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:text="Title:" />
+
+    <TextView
+        android:id="@+id/row_place_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/row_place_title"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="30dp"
+        android:text="Description:" />
+
+    <TextView
+        android:id="@+id/row_place_date_scheduled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/row_place_description"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="30dp"
+        android:text="Date Scheduled:"/>
+
+    <TextView
+        android:id="@+id/row_place_total_places"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/row_place_date_scheduled"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="30dp"
+        android:text="Places"/>
+
+    <Button
+        android:id="@+id/row_place_details_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/row_place_total_places"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="40dp"
+        android:text="Details" />
+
+    <Button
+        android:id="@+id/row_place_view_on_map_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/row_place_total_places"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="40dp"
+        android:text="View On Map" />
+
+    <android.support.v7.widget.AppCompatImageButton
+        android:id="@+id/row_place_delete_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/row_place_title"
+        android:layout_alignEnd="@+id/row_place_view_on_map_btn"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/ic_delete" />
+
+</RelativeLayout>

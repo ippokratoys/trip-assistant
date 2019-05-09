@@ -3,6 +3,7 @@ package com.mantzavelas.tripassistant.restservices;
 import com.mantzavelas.tripassistant.restservices.interceptors.AuthorizationInterceptor;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
@@ -22,9 +23,12 @@ public class RestClient {
     }
 
     public TripAssistantService getTripAssistantService() {
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient httpClient = new OkHttpClient.Builder()
                                                   .addInterceptor(new AuthorizationInterceptor())
+                                                  .addInterceptor(loggingInterceptor)
                                                   .build();
 
         if(tripAssistantClient == null) {

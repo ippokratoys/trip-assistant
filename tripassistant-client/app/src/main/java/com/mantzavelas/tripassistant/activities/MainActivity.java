@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.mantzavelas.tripassistant.R;
+import com.mantzavelas.tripassistant.activities.listeners.IFragmentDrawerListener;
 
 public class MainActivity extends AppCompatActivity implements IFragmentDrawerListener {
 
@@ -82,6 +83,10 @@ public class MainActivity extends AppCompatActivity implements IFragmentDrawerLi
                 title = getString(R.string.title_popular);
                 break;
             case 3:
+                fragment = new TripsFragment();
+                title = getString(R.string.title_trips);
+                break;
+            case 4:
                 fragment = new SettingsFragment();
                 title = getString(R.string.title_settings);
                 break;

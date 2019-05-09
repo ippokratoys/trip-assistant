@@ -95,7 +95,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 User user = new User();
                 user.setUsername(strings[0]);
                 user.setAccessToken(response.body().getAuthToken());
-                CurrentUser.setLoggedInUser(user.getUsername(), user.getAccessToken());
+                CurrentUser.getInstance().setLoggedInUser(user.getUsername(), user.getAccessToken());
                 return true;
             }
 
