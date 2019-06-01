@@ -14,6 +14,17 @@ public class StringUtil {
 	}
 
 	public static boolean empty(String string) {
-		return string == null || string.equals("");
+		return string == null || (string != null && string.isEmpty());
+	}
+
+	public static String removeQuotes(String string) {
+		if (string.startsWith("\"") && string.endsWith("\"")) {
+			string = Arrays.stream(string.split("\""))
+						   .filter(s -> !empty(s))
+					 	   .findFirst()
+					 	   .orElse("");
+		}
+
+		return string;
 	}
 }

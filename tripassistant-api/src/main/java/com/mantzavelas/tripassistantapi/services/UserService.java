@@ -1,17 +1,20 @@
 package com.mantzavelas.tripassistantapi.services;
 
 import com.mantzavelas.tripassistantapi.converters.UserResourceToUserConverter;
+import com.mantzavelas.tripassistantapi.exceptions.EmptyResourceFieldException;
 import com.mantzavelas.tripassistantapi.exceptions.UsernameAlreadyInUseException;
 import com.mantzavelas.tripassistantapi.models.User;
 import com.mantzavelas.tripassistantapi.models.UserCredentials;
 import com.mantzavelas.tripassistantapi.repositories.UserRepository;
 import com.mantzavelas.tripassistantapi.resources.UserResource;
 import com.mantzavelas.tripassistantapi.security.jwt.JwtTokenProvider;
+import com.mantzavelas.tripassistantapi.utils.EncryptUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -60,4 +63,19 @@ public class UserService {
         return tokenProvider.generateToken(authentication);
     }
 
+    public void registerDeviceToken(User authenticatedUser, String token) {
+        System.out.println("Received token: " + token);
+        User user = userRepository.findById(authenticatedUser.getId()).orElse(null);
+
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found on server.");
+        }
+
+        if (token.isEmpty()) {
+            throw new EmptyResourceFieldException("Token can't be empty");
+        }
+
+        user.getDeviceTokens().add(EncryptUtil.encrypt(token));
+        userRepository.save(user);
+    }
 }
