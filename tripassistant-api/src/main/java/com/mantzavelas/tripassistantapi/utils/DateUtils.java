@@ -23,21 +23,11 @@ public class DateUtils {
 		if (date!=null) {
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(date);
-			if (days > 0) {
-				calendar.add(Calendar.DATE, days);
-			}
 
-			if (hours > 0) {
-				calendar.add(Calendar.HOUR, hours);
-			}
-
-			if (minutes > 0) {
-				calendar.add(Calendar.MINUTE, minutes);
-			}
-
-			if (secondsToAdd > 0) {
-				calendar.add(Calendar.SECOND, secondsToAdd);
-			}
+			calendar.add(Calendar.DATE, days);
+			calendar.add(Calendar.HOUR, hours);
+			calendar.add(Calendar.MINUTE, minutes);
+			calendar.add(Calendar.SECOND, secondsToAdd);
 
 			return calendar.getTime();
 		}
@@ -71,7 +61,7 @@ public class DateUtils {
     	int result = daysToMs(1);
     	System.out.println(result);
 
-    	Date result2 = addDaysToDate(new Date(), 3);
+    	Date result2 = addDaysToDate(new Date(), -3);
 		System.out.println(result2);
 	}
 }

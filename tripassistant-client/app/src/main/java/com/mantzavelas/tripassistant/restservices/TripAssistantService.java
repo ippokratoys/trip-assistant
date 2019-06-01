@@ -42,4 +42,7 @@ public interface TripAssistantService {
 
     @DELETE("user/trip/{tripId}")
     Call<Void> deleteTrip(@Path("tripId") Long tripId);
+
+    @POST("user/deviceToken")
+    Call<Void> registerDeviceToken(@Body String token);
 }

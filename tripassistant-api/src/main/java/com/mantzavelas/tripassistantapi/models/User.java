@@ -2,10 +2,11 @@ package com.mantzavelas.tripassistantapi.models;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 import java.util.List;
 
 @Entity(name = "users")
-public class User {
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +25,10 @@ public class User {
     @OneToMany(mappedBy = "user",
 		orphanRemoval = true)
     private List<Trip> trips;
+
+    @Column(columnDefinition="text")
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> deviceTokens;
 
     public User() { }
 
@@ -44,4 +49,7 @@ public class User {
 
 	public List<Trip> getTrips() { return trips; }
 	public void setTrips(List<Trip> trips) { this.trips = trips; }
+
+	public List<String> getDeviceTokens() { return deviceTokens; }
+    public void setDeviceTokens(List<String> deviceTokens) { this.deviceTokens = deviceTokens; }
 }
