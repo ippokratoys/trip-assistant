@@ -20,6 +20,7 @@ import com.mantzavelas.tripassistant.restservices.RestClient;
 import com.mantzavelas.tripassistant.restservices.TripAssistantService;
 import com.mantzavelas.tripassistant.restservices.dtos.UserTokenDto;
 import com.mantzavelas.tripassistant.restservices.resources.UserCredentialResource;
+import com.mantzavelas.tripassistant.services.UserLoginListeners;
 
 import java.io.IOException;
 
@@ -112,6 +113,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                         .replace(R.id.container_body, new HomeFragment(), "HomeFragment")
                         .commit();
                 getFragmentManager().popBackStack();
+                UserLoginListeners.INSTANCE.notifyListeners();
                 return;
             }
 
