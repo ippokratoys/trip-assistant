@@ -1,6 +1,7 @@
 package com.mantzavelas.tripassistantapi.messaging.receivers;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
+import com.mantzavelas.tripassistantapi.messaging.producers.AbstractMessageProducer;
 import com.mantzavelas.tripassistantapi.models.Trip;
 import com.mantzavelas.tripassistantapi.models.User;
 import com.mantzavelas.tripassistantapi.models.UserNotification;
@@ -10,7 +11,6 @@ import com.mantzavelas.tripassistantapi.repositories.UserRepository;
 import com.mantzavelas.tripassistantapi.services.FirebaseCloudMessagingService;
 import com.mantzavelas.tripassistantapi.utils.BeanUtil;
 import com.mantzavelas.tripassistantapi.utils.EncryptUtil;
-import com.mantzavelas.tripassistantapi.utils.PropertyUtil;
 import com.mantzavelas.tripassistantapi.utils.StringUtil;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -26,7 +26,6 @@ import java.util.function.Consumer;
 public class UserNotificationReceiver {
 
 	private static final String QUEUE_NAME = "trip.notification";
-	private static final String HOST = PropertyUtil.getProperty("app.rabbitmq.host");
 
 	private ConnectionFactory factory;
 	private UserNotificationRepository repository = BeanUtil.getBean(UserNotificationRepository.class);
@@ -35,7 +34,10 @@ public class UserNotificationReceiver {
 
 	public UserNotificationReceiver() {
 		factory = new ConnectionFactory();
-		factory.setHost(HOST);
+		factory.setHost(AbstractMessageProducer.HOST);
+		factory.setVirtualHost(AbstractMessageProducer.V_HOST);
+		factory.setUsername(AbstractMessageProducer.USERNAME);
+		factory.setPassword(AbstractMessageProducer.PASSWORD);
 
 		initQueueConnection();
 	}

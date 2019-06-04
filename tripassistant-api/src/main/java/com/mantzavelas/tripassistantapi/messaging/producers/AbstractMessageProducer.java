@@ -15,18 +15,28 @@ import java.util.concurrent.TimeoutException;
 
 public abstract class AbstractMessageProducer {
 
-	private static final String HOST = PropertyUtil.getProperty("app.rabbitmq.host");
+	public static final String HOST = PropertyUtil.getProperty("app.rabbitmq.host");
+	public static final String V_HOST = PropertyUtil.getProperty("app.rabbitmq.vhost");
+	public static final String USERNAME = PropertyUtil.getProperty("app.rabbitmq.user");
+	public static final String PASSWORD = PropertyUtil.getProperty("app.rabbitmq.pass");
 
 	private ConnectionFactory factory;
 	protected Serializable message;
 
 	public AbstractMessageProducer(Serializable message) {
-		factory = new ConnectionFactory();
-		factory.setHost(HOST);
+		initConnFactory();
 
 		this.message = message;
 
 		connectAndSendMessage();
+	}
+
+	private void initConnFactory() {
+		factory = new ConnectionFactory();
+		factory.setHost(HOST);
+		factory.setVirtualHost(V_HOST);
+		factory.setUsername(USERNAME);
+		factory.setPassword(PASSWORD);
 	}
 
 	protected abstract String getQueueName();
