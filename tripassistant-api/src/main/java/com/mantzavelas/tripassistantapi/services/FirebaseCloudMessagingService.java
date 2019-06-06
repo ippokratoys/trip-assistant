@@ -8,16 +8,22 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import com.mantzavelas.tripassistantapi.models.UserNotification;
+import com.mantzavelas.tripassistantapi.utils.PropertyUtil;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 
 public enum FirebaseCloudMessagingService {
 
 	INSTANCE;
 
+	private static final String TOKEN_LOCATION = PropertyUtil.getProperty("app.fcm.tokenLocation");
+
 	public void initializeSdk() throws IOException {
+		FileInputStream refreshToken = new FileInputStream(TOKEN_LOCATION);
+
 		FirebaseOptions options = new FirebaseOptions.Builder()
-			.setCredentials(GoogleCredentials.getApplicationDefault())
+			.setCredentials(GoogleCredentials.fromStream(refreshToken))
 // Use this when in need of firebase cloud db
 //			.setDatabaseUrl("https://" + FIREBASE_DATABASE_NAME + ".firebaseio.com")
 			.build();

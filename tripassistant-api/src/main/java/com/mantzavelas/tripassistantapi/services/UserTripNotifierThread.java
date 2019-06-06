@@ -17,6 +17,7 @@ import java.util.function.Function;
 public class UserTripNotifierThread implements Runnable {
 
 	private static final int NOTIFIER_INTERVAL_MS = DateUtils.hoursToMs(12);
+	private static final int PAGE_SIZE = 10;
 
 	private TripRepository tripRepository = BeanUtil.getBean(TripRepository.class);
 	private UserNotificationRepository notificationRepository = BeanUtil.getBean(UserNotificationRepository.class);
@@ -30,7 +31,9 @@ public class UserTripNotifierThread implements Runnable {
 		}
 
 		while (true) {
-			Slice<Trip> tripSlice = tripRepository.findByStatus(Trip.Status.UPCOMING, PageRequest.of(0, 10));
+
+			Slice<Trip> tripSlice = tripRepository.findByStatus(Trip.Status.UPCOMING, PageRequest.of(0, PAGE_SIZE));
+			int page = tripSlice.getNumber();
 
 			do {
 				tripSlice.get()
@@ -42,13 +45,15 @@ public class UserTripNotifierThread implements Runnable {
 							new UserNotificationProducer(notification);
 						 });
 
-				tripSlice = tripRepository.findByStatus(Trip.Status.UPCOMING, tripSlice.nextPageable());
+				page++;
+				tripSlice = tripRepository.findByStatus(Trip.Status.UPCOMING, PageRequest.of(page, PAGE_SIZE));
 			} while (tripSlice.hasNext());
 
 			try {
 				Thread.sleep(NOTIFIER_INTERVAL_MS);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
+				break;
 			}
 		}
 	}
