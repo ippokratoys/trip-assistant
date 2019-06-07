@@ -1,7 +1,9 @@
 package com.mantzavelas.tripassistantapi;
 
+import com.mantzavelas.tripassistantapi.messaging.receivers.UserNotificationReceiver;
 import com.mantzavelas.tripassistantapi.services.CategoryTaggingThread;
 import com.mantzavelas.tripassistantapi.services.PhotoServiceThread;
+import com.mantzavelas.tripassistantapi.services.UserTripNotifierThread;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -24,5 +26,9 @@ public class TripassistantApiApplication extends SpringBootServletInitializer {
 		photoServiceThread.start();
 		Thread categoryTagging = new Thread(new CategoryTaggingThread());
 		categoryTagging.start();
+		Thread userNotifierThread = new Thread(new UserTripNotifierThread());
+		userNotifierThread.start();
+
+		new UserNotificationReceiver();
 	}
 }
