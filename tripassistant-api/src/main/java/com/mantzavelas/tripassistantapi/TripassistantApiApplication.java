@@ -1,5 +1,6 @@
 package com.mantzavelas.tripassistantapi;
 
+import com.mantzavelas.tripassistantapi.messaging.producers.PopularSeasonPlaceRpcServer;
 import com.mantzavelas.tripassistantapi.messaging.receivers.UserNotificationReceiver;
 import com.mantzavelas.tripassistantapi.services.CategoryTaggingThread;
 import com.mantzavelas.tripassistantapi.services.PhotoServiceThread;
@@ -28,7 +29,9 @@ public class TripassistantApiApplication extends SpringBootServletInitializer {
 		categoryTagging.start();
 		Thread userNotifierThread = new Thread(new UserTripNotifierThread());
 		userNotifierThread.start();
+		new PopularSeasonPlaceRpcServer().initRpcServer();
 
 		new UserNotificationReceiver();
 	}
+
 }

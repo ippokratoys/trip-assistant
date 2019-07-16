@@ -1,8 +1,9 @@
 package com.mantzavelas.tripassistantapi.dtos;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class PlaceDto {
+public class PlaceDto implements Serializable {
 
     private String title;
 

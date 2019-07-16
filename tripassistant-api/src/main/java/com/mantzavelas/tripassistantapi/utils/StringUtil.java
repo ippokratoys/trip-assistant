@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 
 public class StringUtil {
 
+	private StringUtil() { }
+
 	public static String removeSequentialDuplicateChars(String character, String fileName) {
 		String[] splitted = fileName.split(character);
 
@@ -14,7 +16,7 @@ public class StringUtil {
 	}
 
 	public static boolean empty(String string) {
-		return string == null || (string != null && string.isEmpty());
+		return string == null || string.isEmpty();
 	}
 
 	public static String removeQuotes(String string) {

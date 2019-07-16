@@ -59,7 +59,7 @@ public class PhotoService {
 
                 Photo latestPhoto = photosToAdd.get(0);
 
-                if (photoRepository.findByUrl(latestPhoto.getUrl()).isPresent()) {
+                if (!photoRepository.findByUrl(latestPhoto.getUrl()).isEmpty()) {
                     break;
                 }
 
