@@ -5,6 +5,8 @@ import java.util.Date;
 
 public class DateUtils {
 
+	private DateUtils() { }
+
     public static String dateToUnixTimestamp(Date date) {
         long unixTime = (date.getTime()/1000);
 
@@ -57,11 +59,4 @@ public class DateUtils {
     	return 1000* seconds;
 	}
 
-	public static void main(String[] args) {
-    	int result = daysToMs(1);
-    	System.out.println(result);
-
-    	Date result2 = addDaysToDate(new Date(), -3);
-		System.out.println(result2);
-	}
 }

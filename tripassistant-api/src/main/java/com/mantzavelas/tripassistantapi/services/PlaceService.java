@@ -2,34 +2,33 @@ package com.mantzavelas.tripassistantapi.services;
 
 import com.mantzavelas.tripassistantapi.converters.PlaceToPlaceDtoConverter;
 import com.mantzavelas.tripassistantapi.dtos.PlaceDto;
-import com.mantzavelas.tripassistantapi.exceptions.NoSuchCategoryException;
 import com.mantzavelas.tripassistantapi.exceptions.NoSuchCityException;
-import com.mantzavelas.tripassistantapi.models.City;
-import com.mantzavelas.tripassistantapi.models.PhotoCategoryEnum;
-import com.mantzavelas.tripassistantapi.models.Place;
+import com.mantzavelas.tripassistantapi.models.*;
+import com.mantzavelas.tripassistantapi.repositories.PhotoRepository;
 import com.mantzavelas.tripassistantapi.repositories.PlaceRepository;
 import com.mantzavelas.tripassistantapi.utils.LocationUtil;
+import com.mantzavelas.tripassistantapi.utils.StreamUtil;
+import com.mantzavelas.tripassistantapi.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service
 public class PlaceService {
 
-    private PlaceRepository placeRepository;
+    private final PlaceRepository placeRepository;
+    private final PhotoRepository photoRepository;
 
     private PlaceToPlaceDtoConverter converter;
 
 	@Autowired
-	public PlaceService(PlaceRepository placeRepository, PlaceToPlaceDtoConverter converter) {
+	public PlaceService(PlaceRepository placeRepository, PhotoRepository photoRepository, PlaceToPlaceDtoConverter converter) {
 		this.placeRepository = placeRepository;
+		this.photoRepository = photoRepository;
 		this.converter = converter;
 	}
 
@@ -41,14 +40,14 @@ public class PlaceService {
         	radiusInKm = 10; // default to 10km
 		}
 
-        Optional<City> city = getCityFromLatLon(latitude, longitude);
+        Optional<City> city = City.getCityFromLatLon(latitude, longitude);
         List<Place> places = new ArrayList<>();
         if (city.isPresent()) {
             places = placeRepository.findByCity(city.get());
         }
 
-		if (requestCategory != null) {
-			PhotoCategoryEnum category = resolveCategory(requestCategory);
+		if (!StringUtil.empty(requestCategory)) {
+			PhotoCategoryEnum category = PhotoCategoryEnum.resolveCategory(requestCategory);
 			places = getPlacesForCategory(category, places);
 		}
 
@@ -58,19 +57,12 @@ public class PlaceService {
 			.collect(Collectors.toList());
     }
 
-	private PhotoCategoryEnum resolveCategory(String category) {
-		return Arrays.stream(PhotoCategoryEnum.values())
-			.filter(categoryEnum -> categoryEnum.name().equalsIgnoreCase(category))
-    		.findFirst()
-			.orElseThrow(NoSuchCategoryException::new);
-	}
-
 	private Predicate<Place> getPlaceDistancePredicate(String latitude, String longitude, int radiusInKm) {
 		return pl -> LocationUtil.haversineDistanceInKm(latitude,longitude, pl.getLatitude(), pl.getLongitude()) <= radiusInKm;
 	}
 
 	@Transactional
-    List<Place> getPlacesForCategory(PhotoCategoryEnum category, List<Place> places) {
+    public List<Place> getPlacesForCategory(PhotoCategoryEnum category, List<Place> places) {
         return places.stream()
             .filter(p -> p.getCategories()
                           .stream()
@@ -78,8 +70,30 @@ public class PlaceService {
             .collect(Collectors.toList());
     }
 
+    public List<PlaceDto> getPopularPlacesBySeason(String latitude, String longitude) {
+		validateLocation(latitude, longitude);
+
+		return photoRepository.findNearByLatAndLon(latitude, longitude)
+				.stream()
+				.filter(photo -> Seasons.isInCurrentSeason(photo.getDateUploaded()))
+				.filter(StreamUtil.distinctByKey(Photo::getLatitude).and(StreamUtil.distinctByKey(Photo::getLongitude)))
+				.limit(25)
+				.map(photo -> {
+					List<Place> matchedPlaces = placeRepository.findNearByLatLon(photo.getLatitude(), photo.getLongitude(), 0.2F);
+
+					if (matchedPlaces.isEmpty()) {
+						return null;
+					}
+					return matchedPlaces.get(0);
+				})
+				.filter(Objects::nonNull)
+				.map(converter::convert)
+				.sorted(Comparator.comparingInt(PlaceDto::getVisits))
+				.collect(Collectors.toList());
+	}
+
     private void validateLocation(String lat, String lon) {
-        Optional<City> cityOptional = getCityFromLatLon(lat, lon);
+        Optional<City> cityOptional = City.getCityFromLatLon(lat, lon);
 
         if (cityOptional.isPresent()) {
             return;
@@ -87,14 +101,4 @@ public class PlaceService {
 
         throw new NoSuchCityException();
     }
-
-    private Optional<City> getCityFromLatLon(String lat, String lon) {
-        return Arrays.stream(City.values())
-			.filter(getCityDistancePredicate(lat, lon))
-            .findFirst();
-    }
-
-	private Predicate<City> getCityDistancePredicate(String lat, String lon) {
-		return city -> LocationUtil.haversineDistanceInKm(lat, lon, city.getLatitude(), city.getLongitude()) < 100.0;
-	}
 }
