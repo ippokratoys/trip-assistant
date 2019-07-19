@@ -8,11 +8,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.*;
 
-@RunWith(MockitoJUnitRunner.Silent.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class PhotoServiceTest {
 
     private PopularPlaceRepository mockPlaceRepository;
@@ -97,7 +99,7 @@ public class PhotoServiceTest {
         Mockito.when(mockClient.searchPhotosFrom(Mockito.any(Date.class))).thenReturn(constructMockResponse());
         Mockito.when(mockClient.searchPhotosFrom(Mockito.any(Date.class), Mockito.anyString())).thenReturn(null);
         Mockito.when(mockClient.getPhotoInfo(Mockito.anyString())).thenReturn(constructMockPhotoInfoResponse());
-        Mockito.when(mockPhotoRepository.findByUrl(Mockito.anyString())).thenReturn(Optional.of(new Photo()));
+        Mockito.when(mockPhotoRepository.findByUrl(Mockito.anyString())).thenReturn(new ArrayList<>(photoList));
 
         photoService.persistPhotosFromFlickr();
 

@@ -49,6 +49,10 @@ dependencies {
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.powermock:powermock-module-junit4-legacy:2.0.2'
+	testImplementation 'org.powermock:powermock-api-easymock:2.0.2'
+	testImplementation 'org.powermock:powermock-module-testng:2.0.2'
+	testImplementation 'org.powermock:powermock-api-easymock:2.0.2'
 }
 
 bootJar {
