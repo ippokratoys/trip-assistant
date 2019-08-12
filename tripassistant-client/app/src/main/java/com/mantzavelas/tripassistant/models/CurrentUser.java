@@ -1,9 +1,17 @@
 package com.mantzavelas.tripassistant.models;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
+import android.support.v4.app.ActivityCompat;
+
 public class CurrentUser {
 
     private static CurrentUser currentUser;
     private static User user;
+    private LocationManager locationManager;
 
     public static CurrentUser getInstance() {
         if (currentUser == null) {
@@ -16,6 +24,18 @@ public class CurrentUser {
 
     public User getUser() {
         return user;
+    }
+
+    public void initLocationServices(Context context) {
+        if (locationManager == null) {
+            locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        }
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        setUserLocation(Double.toString(lastLocation.getLatitude()), Double.toString(lastLocation.getLongitude()));
     }
 
     public void setLoggedInUser(String username, String token) {

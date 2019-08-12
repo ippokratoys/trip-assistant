@@ -13,6 +13,10 @@ import android.view.View;
 
 import com.mantzavelas.tripassistant.R;
 import com.mantzavelas.tripassistant.activities.listeners.IFragmentDrawerListener;
+import com.mantzavelas.tripassistant.models.CurrentUser;
+import com.mantzavelas.tripassistant.utils.PropUtil;
+
+import java.util.Currency;
 
 public class MainActivity extends AppCompatActivity implements IFragmentDrawerListener {
 
@@ -23,6 +27,8 @@ public class MainActivity extends AppCompatActivity implements IFragmentDrawerLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        PropUtil.initProperties(getApplicationContext());
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -37,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements IFragmentDrawerLi
 
         // display the first navigation drawer view on app launch
         displayView(0);
+
+        CurrentUser.getInstance().initLocationServices(this);
     }
 
     @Override
