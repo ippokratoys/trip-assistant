@@ -10,12 +10,12 @@ import com.mantzavelas.tripassistantapi.repositories.PhotoRepository;
 import com.mantzavelas.tripassistantapi.repositories.PlaceRepository;
 import com.mantzavelas.tripassistantapi.utils.BeanUtil;
 import com.mantzavelas.tripassistantapi.utils.LocationUtil;
+import com.mantzavelas.tripassistantapi.utils.StreamUtil;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 
 import java.text.Collator;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -112,7 +112,7 @@ public class TaggingService {
 
         List<PhotoCategory> categoriesToAdd = photoTags.stream()
             .flatMap(tag -> categoryRepository.findByCategoryTag(tag).stream())
-            .filter(distinctByKey(PhotoCategory::getCategory))
+            .filter(StreamUtil.distinctByKey(PhotoCategory::getCategory))
             .collect(Collectors.toList());
 
         photo.setCategories(new ArrayList<>(categoriesToAdd));
@@ -173,11 +173,6 @@ public class TaggingService {
     private Function<FacebookCurrentPlaceResult, Double> getDistanceFunction(Photo photo) {
         return s -> LocationUtil.haversineDistanceInKm(Double.parseDouble(photo.getLatitude())
                 , Double.parseDouble(photo.getLongitude()), s.getLocation().getLatitude(), s.getLocation().getLongitude());
-    }
-
-    private static <T> Predicate<T> distinctByKey(Function<? super T, ?> key) {
-        Map<Object, Boolean> seen = new ConcurrentHashMap<>();
-        return t -> seen.putIfAbsent(key.apply(t), Boolean.TRUE) == null;
     }
 
 }

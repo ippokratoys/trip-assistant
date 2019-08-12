@@ -5,18 +5,34 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.mantzavelas.tripassistant.R;
+import com.mantzavelas.tripassistant.activities.listeners.NotifyDataSetChanged;
+import com.mantzavelas.tripassistant.adapters.PlaceDtoAdapter;
 import com.mantzavelas.tripassistant.models.CurrentUser;
+import com.mantzavelas.tripassistantapi.dtos.PlaceDto;
+import com.mantzavelas.tripassistant.restservices.tasks.GetSeasonPlacesTask;
 
-public class HomeFragment extends Fragment implements View.OnClickListener {
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+public class HomeFragment extends Fragment implements View.OnClickListener, NotifyDataSetChanged {
 
     private Button loginButton;
     private Button registerButton;
+    private RecyclerView seasonPlacesRecyclers;
+
+    private PlaceDtoAdapter placesAdapter;
+    private List<PlaceDto> places;
 
     public HomeFragment() {
     }
@@ -42,12 +58,23 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        seasonPlacesRecyclers = view.findViewById(R.id.home_season_recycler);
         loginButton = view.findViewById(R.id.home_login_btn);
         registerButton = view.findViewById(R.id.home_register_btn);
         loginButton.setOnClickListener(this);
         registerButton.setOnClickListener(this);
 
 
+        places = new ArrayList<>();
+        placesAdapter = new PlaceDtoAdapter(places);
+
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        seasonPlacesRecyclers.setLayoutManager(layoutManager);
+        seasonPlacesRecyclers.setItemAnimator(new DefaultItemAnimator());
+        seasonPlacesRecyclers.setAdapter(placesAdapter);
+
+        new GetSeasonPlacesTask(this)
+                .execute(new Pair<>(CurrentUser.getInstance().getLatitude(), CurrentUser.getInstance().getLongitude()));
         hideLoginButtons();
     }
 
@@ -88,5 +115,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 .replace(R.id.home_container, fragment)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    @Override
+    public void onDataSetChanged(Collection<?> dataSet) {
+        this.places = (List<PlaceDto>) dataSet;
+        placesAdapter.setDataset(places);
+        placesAdapter.notifyDataSetChanged();
     }
 }

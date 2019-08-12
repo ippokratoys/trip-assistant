@@ -7,6 +7,22 @@
     android:orientation="vertical"
     tools:context=".activities.HomeFragment">
 
+    <TextView
+        android:id="@+id/home_season_places_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_centerHorizontal="true"
+        android:text="Popular Places this time of Season"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/home_season_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_below="@id/home_season_places_textview"/>
 
     <LinearLayout
         android:layout_width="match_parent"
