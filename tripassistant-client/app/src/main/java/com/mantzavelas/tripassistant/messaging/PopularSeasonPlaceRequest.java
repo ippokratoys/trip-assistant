@@ -3,7 +3,7 @@ package com.mantzavelas.tripassistant.messaging;
 import android.util.Log;
 
 import com.mantzavelas.tripassistant.messaging.common.ConnectionInstance;
-import com.mantzavelas.tripassistant.restservices.dtos.PlaceDto;
+import com.mantzavelas.tripassistantapi.dtos.PlaceDto;
 import com.mantzavelas.tripassistantapi.dtos.LocationDto;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
