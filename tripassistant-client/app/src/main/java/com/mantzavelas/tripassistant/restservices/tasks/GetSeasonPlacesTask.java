@@ -6,7 +6,7 @@ import android.util.Pair;
 
 import com.mantzavelas.tripassistant.activities.listeners.NotifyDataSetChanged;
 import com.mantzavelas.tripassistant.messaging.PopularSeasonPlaceRequest;
-import com.mantzavelas.tripassistant.restservices.dtos.PlaceDto;
+import com.mantzavelas.tripassistantapi.dtos.PlaceDto;
 
 import java.io.IOException;
 import java.util.Collections;

@@ -31,7 +31,7 @@ import com.mantzavelas.tripassistant.activities.helpers.NotLoggedInAlertDialog;
 import com.mantzavelas.tripassistant.models.CurrentUser;
 import com.mantzavelas.tripassistant.restservices.RestClient;
 import com.mantzavelas.tripassistant.restservices.TripAssistantService;
-import com.mantzavelas.tripassistant.restservices.dtos.PlaceDto;
+import com.mantzavelas.tripassistant.restservices.dtos.CustomPlaceDto;
 import com.mantzavelas.tripassistant.services.SearchPlaceService;
 import com.mantzavelas.tripassistant.utils.PermissionUtil;
 
@@ -222,7 +222,7 @@ public class SearchPlaceFragment extends Fragment implements OnMapReadyCallback 
 
         private TripAssistantService service = RestClient.create().getTripAssistantService();
         private Map<String, String> params = new HashMap<>();
-        private List<PlaceDto> places;
+        private List<CustomPlaceDto> places;
 
         @Override
         protected Void doInBackground(Void... voids) {
@@ -239,7 +239,7 @@ public class SearchPlaceFragment extends Fragment implements OnMapReadyCallback 
             }
 
             try {
-                Response<List<PlaceDto>> response = service.searchPlaces(params).execute();
+                Response<List<CustomPlaceDto>> response = service.searchPlaces(params).execute();
                 if (response.code() != 200) {
                     throw new HttpException(response);
                 }
@@ -256,7 +256,7 @@ public class SearchPlaceFragment extends Fragment implements OnMapReadyCallback 
         protected void onPostExecute(Void aVoid) {
             LatLngBounds.Builder boundBuilder = new LatLngBounds.Builder();
             if (places != null && !places.isEmpty()) {
-                for (PlaceDto place : places) {
+                for (CustomPlaceDto place : places) {
                     MarkerOptions marker = searchService.createMarker(place);
                     gMap.addMarker(marker);
                     boundBuilder.include(marker.getPosition());

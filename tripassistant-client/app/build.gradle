@@ -21,6 +21,10 @@ android {
         targetCompatibility = '1.8'
     }
     buildToolsVersion = '28.0.3'
+
+    lintOptions {
+        warning 'InvalidPackage'
+    }
 }
 
 dependencies {
@@ -50,7 +54,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation files('libs/tripassistant-api_main.jar')
+    implementation files('libs/common-dtos.jar')
 }
 
 apply plugin: 'com.google.gms.google-services'

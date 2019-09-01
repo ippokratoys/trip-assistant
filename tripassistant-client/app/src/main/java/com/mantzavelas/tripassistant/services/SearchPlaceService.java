@@ -16,7 +16,7 @@ import com.mantzavelas.tripassistant.models.CurrentUser;
 import com.mantzavelas.tripassistant.models.enums.CategoryEnum;
 import com.mantzavelas.tripassistant.restservices.RestClient;
 import com.mantzavelas.tripassistant.restservices.TripAssistantService;
-import com.mantzavelas.tripassistant.restservices.dtos.PlaceDto;
+import com.mantzavelas.tripassistant.restservices.dtos.CustomPlaceDto;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -66,7 +66,7 @@ public class SearchPlaceService {
         return String.valueOf((int)Double.parseDouble(meters));
     }
 
-    public static MarkerOptions createMarker(PlaceDto place) {
+    public static MarkerOptions createMarker(CustomPlaceDto place) {
         LatLng latLng = new LatLng(Double.parseDouble(place.getLatitude()), Double.parseDouble(place.getLongitude()));
         MarkerOptions marker = new MarkerOptions();
         marker.position(latLng);
@@ -94,7 +94,7 @@ public class SearchPlaceService {
 
         private TripAssistantService service;
         private Map<String, String> params;
-        private List<PlaceDto> places;
+        private List<CustomPlaceDto> places;
 
         public Task(String category, String meters, GoogleMap gMap) {
             this.category = category;
@@ -120,7 +120,7 @@ public class SearchPlaceService {
             }
 
             try {
-                Response<List<PlaceDto>> response = service.searchPlaces(params).execute();
+                Response<List<CustomPlaceDto>> response = service.searchPlaces(params).execute();
                 if (response.code() != 200) {
                     throw new HttpException(response);
                 }
@@ -137,7 +137,7 @@ public class SearchPlaceService {
         protected void onPostExecute(Void aVoid) {
             LatLngBounds.Builder boundBuilder = new LatLngBounds.Builder();
             if (places != null && !places.isEmpty()) {
-                for (PlaceDto place : places) {
+                for (CustomPlaceDto place : places) {
                     MarkerOptions marker = createMarker(place);
                     gMap.addMarker(marker);
                     boundBuilder.include(marker.getPosition());
