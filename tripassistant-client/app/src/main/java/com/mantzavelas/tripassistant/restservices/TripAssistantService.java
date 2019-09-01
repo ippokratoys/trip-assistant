@@ -1,6 +1,6 @@
 package com.mantzavelas.tripassistant.restservices;
 
-import com.mantzavelas.tripassistant.restservices.dtos.PlaceDto;
+import com.mantzavelas.tripassistant.restservices.dtos.CustomPlaceDto;
 import com.mantzavelas.tripassistant.restservices.dtos.PopularPlaceDto;
 import com.mantzavelas.tripassistant.restservices.dtos.TripDto;
 import com.mantzavelas.tripassistant.restservices.dtos.UserTokenDto;
@@ -32,7 +32,7 @@ public interface TripAssistantService {
     Call<List<PopularPlaceDto>> getTop10Places();
 
     @GET("places/search")
-    Call<List<PlaceDto>> searchPlaces(@QueryMap Map<String, String> params);
+    Call<List<CustomPlaceDto>> searchPlaces(@QueryMap Map<String, String> params);
 
     @POST("user/trip")
     Call<TripDto> createTrip(@Body TripResource resource);

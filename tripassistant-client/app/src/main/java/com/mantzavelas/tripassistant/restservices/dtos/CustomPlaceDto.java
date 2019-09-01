@@ -2,7 +2,7 @@ package com.mantzavelas.tripassistant.restservices.dtos;
 
 import java.util.List;
 
-public class PlaceDto {
+public class CustomPlaceDto {
 
     private String title;
 
@@ -16,7 +16,7 @@ public class PlaceDto {
 
     private List<String> photoUrls;
 
-    public PlaceDto() {
+    public CustomPlaceDto() {
     }
 
     public String getTitle() { return title; }
