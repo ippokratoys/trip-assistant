@@ -1,10 +1,7 @@
 package com.mantzavelas.tripassistantapi.services;
 
 import com.mantzavelas.tripassistantapi.models.*;
-import com.mantzavelas.tripassistantapi.photos.facebook.FacebookCategory;
-import com.mantzavelas.tripassistantapi.photos.facebook.FacebookRestClient;
-import com.mantzavelas.tripassistantapi.photos.facebook.FacebookSearchPlaceResponse;
-import com.mantzavelas.tripassistantapi.photos.facebook.FacebookSearchPlaceResult;
+import com.mantzavelas.tripassistantapi.photos.facebook.*;
 import com.mantzavelas.tripassistantapi.repositories.PhotoCategoryRepository;
 import com.mantzavelas.tripassistantapi.repositories.PhotoRepository;
 import com.mantzavelas.tripassistantapi.repositories.PlaceRepository;
@@ -87,7 +84,7 @@ public class TaggingService {
             place.addPhoto(photo.getUrl());
 
             Optional<City> placeCity = Arrays.stream(City.values())
-                    .filter(getCityPredicate(result))
+                    .filter(getCityPredicate(result, latitude, longitude))
                     .findFirst();
 
             if (placeCity.isPresent()) {
@@ -98,8 +95,13 @@ public class TaggingService {
         placeRepository.save(place);
     }
 
-    private Predicate<City> getCityPredicate(FacebookSearchPlaceResult result) {
-        return city -> collatorInstance.compare(city.name(), result.getLocation().getCity()) == 0;
+    private Predicate<City> getCityPredicate(FacebookSearchPlaceResult result, String latitude, String longitude) {
+    	if (Optional.ofNullable(result)
+				.map(FacebookSearchPlaceResult::getLocation).map(FacebookLocation::getCity).isPresent()) {
+			return city -> collatorInstance.compare(city.name(), result.getLocation().getCity()) == 0;
+		}
+		return city ->
+				LocationUtil.haversineDistanceInKm(city.getLatitude(), city.getLongitude(), latitude, longitude) < 20.0;
     }
 
 
