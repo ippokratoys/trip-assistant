@@ -2,8 +2,8 @@ package com.mantzavelas.tripassistantapi.services;
 
 import com.mantzavelas.tripassistantapi.models.PhotoCategory;
 import com.mantzavelas.tripassistantapi.models.PhotoCategoryEnum;
-import com.mantzavelas.tripassistantapi.photos.utils.DataMuseRestClient;
-import com.mantzavelas.tripassistantapi.photos.utils.RelativeWord;
+import com.mantzavelas.tripassistantapi.photos.datamuse.DataMuseRestClient;
+import com.mantzavelas.tripassistantapi.photos.datamuse.RelativeWord;
 import com.mantzavelas.tripassistantapi.repositories.PhotoCategoryRepository;
 import com.mantzavelas.tripassistantapi.utils.BeanUtil;
 import com.mantzavelas.tripassistantapi.utils.DateUtils;
