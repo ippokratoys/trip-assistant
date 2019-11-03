@@ -1,4 +1,4 @@
-package com.mantzavelas.tripassistantapi.photos.utils;
+package com.mantzavelas.tripassistantapi.photos.flickr;
 
 public class FlickrPhotoInfoResponse {
 

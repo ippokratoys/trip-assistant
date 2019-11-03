@@ -1,4 +1,4 @@
-package com.mantzavelas.tripassistantapi.photos.utils;
+package com.mantzavelas.tripassistantapi.photos.datamuse;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

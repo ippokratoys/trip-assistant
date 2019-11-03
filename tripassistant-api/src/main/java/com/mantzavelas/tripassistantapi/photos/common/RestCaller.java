@@ -1,4 +1,4 @@
-package com.mantzavelas.tripassistantapi.photos.utils;
+package com.mantzavelas.tripassistantapi.photos.common;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;

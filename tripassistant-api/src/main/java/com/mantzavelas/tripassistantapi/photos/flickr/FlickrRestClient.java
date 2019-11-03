@@ -1,7 +1,8 @@
-package com.mantzavelas.tripassistantapi.photos.utils;
+package com.mantzavelas.tripassistantapi.photos.flickr;
 
-import com.mantzavelas.tripassistantapi.photos.AbstractRestClient;
-import com.mantzavelas.tripassistantapi.photos.IntervalType;
+import com.mantzavelas.tripassistantapi.photos.common.AbstractRestClient;
+import com.mantzavelas.tripassistantapi.photos.common.IntervalType;
+import com.mantzavelas.tripassistantapi.photos.common.RestCall;
 import com.mantzavelas.tripassistantapi.utils.DateUtils;
 import com.mantzavelas.tripassistantapi.utils.PropertyUtil;
 import org.springframework.http.HttpMethod;

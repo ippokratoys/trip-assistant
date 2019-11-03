@@ -1,6 +1,7 @@
-package com.mantzavelas.tripassistantapi.photos;
+package com.mantzavelas.tripassistantapi.photos.common;
 
-import com.mantzavelas.tripassistantapi.photos.utils.RestCaller;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
@@ -9,18 +10,20 @@ import java.net.URI;
 
 public abstract class AbstractRestClient implements RestClient{
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRestClient.class);
+
     private RestTemplate restTemplate = new RestTemplate();
     private RestCaller restCaller = new RestCaller();
 
-    public int totalCalls;
+    private int totalCalls;
 
-    public abstract String baseUrl();
+	public abstract String baseUrl();
 
-    public boolean canCall() {
+    private boolean canCall() {
         return IntervalType.UNLIMITED.equals(interval()) || totalCalls <= callsPerInterval();
     }
 
-    public void checkCallAbility() {
+    private void checkCallAbility() {
         try {
             if (canCall()) {
                 totalCalls++;
@@ -28,19 +31,20 @@ public abstract class AbstractRestClient implements RestClient{
                 Thread.sleep(1000);
             } else {
                 totalCalls = 0;
-                Thread.sleep(interval().getValue() * 1000);
+                Thread.sleep(interval().getValue() * 1000L);
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOGGER.error("Interrupted!", e);
+            Thread.currentThread().interrupt();
         }
     }
 
-    public <T>T call(String url, HttpMethod method, HttpEntity entity, Class<T> clazz){
+    protected <T>T call(String url, HttpMethod method, HttpEntity entity, Class<T> clazz){
         checkCallAbility();
         return restCaller.call(url, method, entity, clazz).getBody();
     }
 
-    public <T>T getForObject(URI uri, Class<T> clazz) {
+    protected <T>T getForObject(URI uri, Class<T> clazz) {
         checkCallAbility();
         return restTemplate.getForObject(uri, clazz);
     }
