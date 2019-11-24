@@ -1,7 +1,7 @@
 package com.mantzavelas.tripassistantapi.services;
 
 import com.mantzavelas.tripassistantapi.models.Photo;
-import com.mantzavelas.tripassistantapi.photos.utils.*;
+import com.mantzavelas.tripassistantapi.photos.flickr.*;
 import com.mantzavelas.tripassistantapi.repositories.PhotoRepository;
 import com.mantzavelas.tripassistantapi.repositories.PopularPlaceRepository;
 import org.junit.Before;

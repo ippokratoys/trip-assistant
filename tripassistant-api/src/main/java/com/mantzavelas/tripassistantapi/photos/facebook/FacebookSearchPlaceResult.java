@@ -1,10 +1,10 @@
-package com.mantzavelas.tripassistantapi.photos.utils;
+package com.mantzavelas.tripassistantapi.photos.facebook;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public class FacebookCurrentPlaceResult {
+public class FacebookSearchPlaceResult {
 
     private String id;
 
@@ -19,11 +19,7 @@ public class FacebookCurrentPlaceResult {
     @JsonProperty("category_list")
     private List<FacebookCategory> categories;
 
-    @JsonProperty("confidence_level")
-    private String confidenceLevel;
-
-    public FacebookCurrentPlaceResult() {
-    }
+    public FacebookSearchPlaceResult() { /* Needed by Jackson deserializer */}
 
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
@@ -42,7 +38,4 @@ public class FacebookCurrentPlaceResult {
 
     public List<FacebookCategory> getCategories() { return categories; }
     public void setCategories(List<FacebookCategory> categories) { this.categories = categories; }
-
-    public String getConfidenceLevel() { return confidenceLevel; }
-    public void setConfidenceLevel(String confidenceLevel) { this.confidenceLevel = confidenceLevel; }
 }

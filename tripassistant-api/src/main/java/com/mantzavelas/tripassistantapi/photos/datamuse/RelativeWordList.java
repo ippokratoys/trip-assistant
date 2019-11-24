@@ -1,6 +1,4 @@
-package com.mantzavelas.tripassistantapi.photos;
-
-import com.mantzavelas.tripassistantapi.photos.utils.RelativeWord;
+package com.mantzavelas.tripassistantapi.photos.datamuse;
 
 import java.util.List;
 

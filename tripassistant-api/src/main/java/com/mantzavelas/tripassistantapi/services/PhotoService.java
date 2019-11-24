@@ -2,7 +2,11 @@ package com.mantzavelas.tripassistantapi.services;
 
 import com.mantzavelas.tripassistantapi.models.Photo;
 import com.mantzavelas.tripassistantapi.models.PopularPlace;
-import com.mantzavelas.tripassistantapi.photos.utils.*;
+import com.mantzavelas.tripassistantapi.photos.flickr.FlickrPhotoInfo;
+import com.mantzavelas.tripassistantapi.photos.flickr.FlickrPhotoSearch;
+import com.mantzavelas.tripassistantapi.photos.flickr.FlickrRestClient;
+import com.mantzavelas.tripassistantapi.photos.flickr.FlickrSearchResponse;
+import com.mantzavelas.tripassistantapi.photos.utils.PhotoInfoToPhotoConverter;
 import com.mantzavelas.tripassistantapi.repositories.PhotoRepository;
 import com.mantzavelas.tripassistantapi.repositories.PopularPlaceRepository;
 import com.mantzavelas.tripassistantapi.utils.BeanUtil;

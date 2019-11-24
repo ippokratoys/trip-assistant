@@ -1,6 +1,7 @@
 package com.mantzavelas.tripassistantapi.photos.utils;
 
 import com.mantzavelas.tripassistantapi.models.Photo;
+import com.mantzavelas.tripassistantapi.photos.flickr.FlickrPhotoInfo;
 import org.springframework.core.convert.converter.Converter;
 
 import java.time.Instant;

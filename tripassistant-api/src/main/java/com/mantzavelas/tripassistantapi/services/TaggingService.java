@@ -1,10 +1,7 @@
 package com.mantzavelas.tripassistantapi.services;
 
 import com.mantzavelas.tripassistantapi.models.*;
-import com.mantzavelas.tripassistantapi.photos.utils.FacebookCategory;
-import com.mantzavelas.tripassistantapi.photos.utils.FacebookCurrentPlaceResponse;
-import com.mantzavelas.tripassistantapi.photos.utils.FacebookCurrentPlaceResult;
-import com.mantzavelas.tripassistantapi.photos.utils.FacebookRestClient;
+import com.mantzavelas.tripassistantapi.photos.facebook.*;
 import com.mantzavelas.tripassistantapi.repositories.PhotoCategoryRepository;
 import com.mantzavelas.tripassistantapi.repositories.PhotoRepository;
 import com.mantzavelas.tripassistantapi.repositories.PlaceRepository;
@@ -49,17 +46,18 @@ public class TaggingService {
 
         do {
             for (Photo photo : photoBatchSlice.getContent()) {
-                FacebookCurrentPlaceResult result= getFacebookCurrentPlaceResult(photo);
-                doPhotoCategorization(photo, result);
-                //at this point, photo categories are assigned to the photo, so they can be fetched in persistPlaces
-                persistPlaces(photo, result);
+                getFacebookCurrentPlaceResult(photo).ifPresent(result -> {
+					doPhotoCategorization(photo, result);
+					//at this point, photo categories are assigned to the photo, so they can be fetched in persistPlaces
+					persistPlaces(photo, result);
+				});
             }
             slicePage++;
             photoBatchSlice = photoRepository.findAllUncategorized(PageRequest.of(slicePage, 100));
         } while (photoBatchSlice.hasNext());
     }
 
-    private void persistPlaces(Photo photo, FacebookCurrentPlaceResult result) {
+    private void persistPlaces(Photo photo, FacebookSearchPlaceResult result) {
 
         String latitude = Double.toString(result.getLocation().getLatitude());
         String longitude = Double.toString(result.getLocation().getLongitude());
@@ -86,7 +84,7 @@ public class TaggingService {
             place.addPhoto(photo.getUrl());
 
             Optional<City> placeCity = Arrays.stream(City.values())
-                    .filter(getCityPredicate(result))
+                    .filter(getCityPredicate(result, latitude, longitude))
                     .findFirst();
 
             if (placeCity.isPresent()) {
@@ -97,12 +95,17 @@ public class TaggingService {
         placeRepository.save(place);
     }
 
-    private Predicate<City> getCityPredicate(FacebookCurrentPlaceResult result) {
-        return city -> collatorInstance.compare(city.name(), result.getLocation().getCity()) == 0;
+    private Predicate<City> getCityPredicate(FacebookSearchPlaceResult result, String latitude, String longitude) {
+    	if (Optional.ofNullable(result)
+				.map(FacebookSearchPlaceResult::getLocation).map(FacebookLocation::getCity).isPresent()) {
+			return city -> collatorInstance.compare(city.name(), result.getLocation().getCity()) == 0;
+		}
+		return city ->
+				LocationUtil.haversineDistanceInKm(city.getLatitude(), city.getLongitude(), latitude, longitude) < 20.0;
     }
 
 
-    private void doPhotoCategorization(Photo photo, FacebookCurrentPlaceResult result) {
+    private void doPhotoCategorization(Photo photo, FacebookSearchPlaceResult result) {
         Set<String> photoTags = getPhotoTags(photo, result);
 
         photoTags.retainAll(categories.stream()
@@ -133,17 +136,16 @@ public class TaggingService {
         photoRepository.save(photo);
     }
 
-    private FacebookCurrentPlaceResult getFacebookCurrentPlaceResult(Photo photo) {
-        FacebookCurrentPlaceResponse response = FacebookRestClient.create().getCurrentPlace(photo.getLatitude(), photo.getLongitude());
+    private Optional<FacebookSearchPlaceResult> getFacebookCurrentPlaceResult(Photo photo) {
+        FacebookSearchPlaceResponse response = FacebookRestClient.create().getCurrentPlace(photo.getLatitude(), photo.getLongitude());
 
-        return response.getData()
-            .stream()
-            .sorted(Comparator.comparing(getDistanceFunction(photo)))
-            .findFirst()
-            .get();
+        return Optional.ofNullable(response)
+				.map(FacebookSearchPlaceResponse::getData)
+				.map(Collection::stream)
+				.flatMap(stream -> stream.min(Comparator.comparing(getDistanceFunction(photo))));
     }
 
-    private Set<String> getPhotoTags(Photo photo, FacebookCurrentPlaceResult result) {
+    private Set<String> getPhotoTags(Photo photo, FacebookSearchPlaceResult result) {
         Set<String> photoTags = new HashSet<>();
 
         if (result.getDescription() != null) {
@@ -170,7 +172,7 @@ public class TaggingService {
         return photoTags;
     }
 
-    private Function<FacebookCurrentPlaceResult, Double> getDistanceFunction(Photo photo) {
+    private Function<FacebookSearchPlaceResult, Double> getDistanceFunction(Photo photo) {
         return s -> LocationUtil.haversineDistanceInKm(Double.parseDouble(photo.getLatitude())
                 , Double.parseDouble(photo.getLongitude()), s.getLocation().getLatitude(), s.getLocation().getLongitude());
     }
