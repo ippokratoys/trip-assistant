@@ -71,8 +71,8 @@ public class TaggingService {
         } else {
             place = new Place();
 
-            String title = result.getName() != null ? result.getName() : photo.getTitle();
-            String description = result.getDescription() != null ? result.getDescription() : photo.getDescription();
+            String title = Optional.ofNullable(result.getName()).orElse(photo.getTitle());
+            String description = Optional.ofNullable(result.getDescription()).orElse(photo.getDescription());
 
             place.setTitle(title);
             place.setDescription(description);
@@ -148,13 +148,8 @@ public class TaggingService {
     private Set<String> getPhotoTags(Photo photo, FacebookSearchPlaceResult result) {
         Set<String> photoTags = new HashSet<>();
 
-        if (result.getDescription() != null) {
-            photoTags.addAll(Arrays.asList(result.getDescription().split(" ")));
-        }
-
-        if (result.getName() != null) {
-            photoTags.addAll(Arrays.asList(result.getName().split(" ")));
-        }
+        Optional.ofNullable(result.getDescription()).ifPresent(desc -> photoTags.addAll(Arrays.asList(desc.split(" "))));
+        Optional.ofNullable(result.getName()).ifPresent(name -> photoTags.addAll(Arrays.asList(name.split(" "))));
 
         photoTags.addAll(result.getCategories()
             .stream()
@@ -162,13 +157,9 @@ public class TaggingService {
             .collect(Collectors.toList())
         );
 
-        if (photo.getTitle() != null) {
-            photoTags.addAll(Arrays.asList(photo.getTitle().split(" ")));
-        }
+        Optional.ofNullable(photo.getTitle()).ifPresent(title -> photoTags.addAll(Arrays.asList(title.split(" "))));
+		Optional.ofNullable(photo.getDescription()).ifPresent(desc -> photoTags.addAll(Arrays.asList(desc.split(" "))));
 
-        if (photo.getDescription() != null) {
-            photoTags.addAll(Arrays.asList(photo.getDescription().split(" ")));
-        }
         return photoTags;
     }
 

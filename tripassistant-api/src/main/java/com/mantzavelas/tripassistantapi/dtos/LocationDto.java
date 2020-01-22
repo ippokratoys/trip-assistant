@@ -8,6 +8,8 @@ public class LocationDto implements Serializable {
 
 	String longitude;
 
+	public LocationDto() { /* Needed by Jackson deserializer */ }
+
 	public LocationDto(String latitude, String longitude) {
 		this.latitude = latitude;
 		this.longitude = longitude;

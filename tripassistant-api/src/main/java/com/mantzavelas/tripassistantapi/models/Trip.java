@@ -11,7 +11,8 @@ public class Trip implements Serializable {
 	public enum Status {
 		FUTURE,
 		UPCOMING,
-		ARCHIVED
+		RUNNING,
+		COMPLETED
 	}
 
 	@Id
@@ -67,4 +68,8 @@ public class Trip implements Serializable {
 
 	public Date getLastNotified() { return lastNotified; }
 	public void setLastNotified(Date lastNotified) { this.lastNotified = lastNotified; }
+
+	public boolean belongsToUser(User otherUser) {
+		return this.user.equals(otherUser);
+	}
 }
