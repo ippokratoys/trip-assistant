@@ -8,6 +8,8 @@ import java.util.List;
 @Entity
 public class Trip implements Serializable {
 
+	private static final long serialVersionUID = 1244036645984216540L;
+
 	public enum Status {
 		FUTURE,
 		UPCOMING,
