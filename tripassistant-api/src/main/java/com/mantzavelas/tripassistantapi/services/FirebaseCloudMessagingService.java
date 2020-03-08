@@ -9,6 +9,8 @@ import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import com.mantzavelas.tripassistantapi.models.UserNotification;
 import com.mantzavelas.tripassistantapi.utils.PropertyUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,6 +18,8 @@ import java.io.IOException;
 public enum FirebaseCloudMessagingService {
 
 	INSTANCE;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(FirebaseCloudMessagingService.class);
 
 	private static final String TOKEN_LOCATION = PropertyUtil.getProperty("app.fcm.tokenLocation");
 
@@ -28,7 +32,10 @@ public enum FirebaseCloudMessagingService {
 //			.setDatabaseUrl("https://" + FIREBASE_DATABASE_NAME + ".firebaseio.com")
 			.build();
 
+		LOGGER.info("Initializing firebase app for project: " + options.getProjectId());
+
 		FirebaseApp.initializeApp(options);
+		LOGGER.info("Initialized firebase app with name: " + FirebaseApp.getInstance().getName());
 	}
 
 	public String sendSingleMessage(String deviceToken, UserNotification notification) throws FirebaseMessagingException {
@@ -38,7 +45,7 @@ public enum FirebaseCloudMessagingService {
 			.build();
 
 		String response = FirebaseMessaging.getInstance().send(message);
-		System.out.println("Sent FCM message: " + response);
+		LOGGER.info("Sent FCM message: " + response);
 
 		return response;
 	}
