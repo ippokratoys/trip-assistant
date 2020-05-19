@@ -4,9 +4,11 @@ import java.io.Serializable;
 
 public class LocationDto implements Serializable {
 
-	String latitude;
+	private static final long serialVersionUID = -3802715817637219593L;
 
-	String longitude;
+	private String latitude;
+
+	private String longitude;
 
 	public LocationDto() { /* Needed by Jackson deserializer */ }
 
