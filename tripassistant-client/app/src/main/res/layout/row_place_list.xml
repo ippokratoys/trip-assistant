@@ -56,6 +56,16 @@
         android:text="Details" />
 
     <Button
+        android:id="@+id/row_place_middle_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/row_place_total_places"
+        android:layout_marginTop="40dp"
+        android:layout_centerHorizontal="true"
+        android:text="Start Now" />
+
+
+    <Button
         android:id="@+id/row_place_view_on_map_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -64,7 +74,7 @@
         android:layout_marginTop="40dp"
         android:text="View On Map" />
 
-    <android.support.v7.widget.AppCompatImageButton
+    <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/row_place_delete_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

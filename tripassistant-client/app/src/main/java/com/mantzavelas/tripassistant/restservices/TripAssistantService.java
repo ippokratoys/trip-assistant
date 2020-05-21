@@ -7,6 +7,7 @@ import com.mantzavelas.tripassistant.restservices.dtos.UserTokenDto;
 import com.mantzavelas.tripassistant.restservices.resources.TripResource;
 import com.mantzavelas.tripassistant.restservices.resources.UserCredentialResource;
 import com.mantzavelas.tripassistant.restservices.resources.UserResource;
+import com.mantzavelas.tripassistantapi.dtos.LocationDto;
 
 import java.util.List;
 import java.util.Map;
@@ -22,18 +23,25 @@ import retrofit2.http.QueryMap;
 
 public interface TripAssistantService {
 
+    //AUTHENTICATION
     @POST("auth/signup")
     Call<UserTokenDto> register(@Body UserResource userResource);
 
     @POST("auth/signin")
     Call<UserTokenDto> login(@Body UserCredentialResource resource);
 
+    //PLACES
     @GET("places")
     Call<List<PopularPlaceDto>> getTop10Places();
 
     @GET("places/search")
     Call<List<CustomPlaceDto>> searchPlaces(@QueryMap Map<String, String> params);
 
+    //USER
+    @POST("user/deviceToken")
+    Call<Void> registerDeviceToken(@Body String token);
+
+    //USER TRIPS
     @POST("user/trip")
     Call<TripDto> createTrip(@Body TripResource resource);
 
@@ -43,6 +51,9 @@ public interface TripAssistantService {
     @DELETE("user/trip/{tripId}")
     Call<Void> deleteTrip(@Path("tripId") Long tripId);
 
-    @POST("user/deviceToken")
-    Call<Void> registerDeviceToken(@Body String token);
+    @POST("user/trip/{tripId}/start")
+    Call<TripDto> beginTrip(@Path("tripId") Long tripId, @Body LocationDto dto);
+
+    @POST("user/trip/{tripId}/stop")
+    Call<Void> stopTrip(@Path("tripId") Long tripId);
 }

@@ -4,17 +4,18 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mantzavelas.tripassistant.R;
 import com.mantzavelas.tripassistant.activities.helpers.SimpleDialogBuilder;
 import com.mantzavelas.tripassistant.activities.listeners.NotifyDataSetChanged;
@@ -48,11 +49,15 @@ public abstract class TripFragmentPage extends Fragment implements NotifyDataSet
 
     public boolean isFabEnabled() { return true; }
 
+    public boolean displayMidButton() { return false; }
+
+    public TripFragmentPage() {
+        items = new ArrayList<>();
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        items = new ArrayList<>();
     }
 
     @Nullable
@@ -69,7 +74,7 @@ public abstract class TripFragmentPage extends Fragment implements NotifyDataSet
         fab.setEnabled(isFabEnabled());
         fab.setOnClickListener(fabClickListener);
 
-        adapter = new TripsAdapter(items, recyclerViewRowListener);
+        adapter = new TripsAdapter(items, recyclerViewRowListener, displayMidButton());
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
@@ -101,20 +106,29 @@ public abstract class TripFragmentPage extends Fragment implements NotifyDataSet
         @Override
         public void onPositionClicked(int position, int componentId) {
             switch (componentId) {
-                case R.id.row_place_details_btn :
+                case R.id.row_place_details_btn:
                     Intent intent = new Intent(getContext(), TripDetailsActivity.class);
                     intent.putExtra("TRIP", items.get(position));
                     startActivity(intent);
                     break;
-                case R.id.row_place_view_on_map_btn :
-                    CustomMapFragment<Place> mapFragment = new CustomMapFragment<>();
+                case R.id.row_place_middle_btn:
+                    TripNavigationMapFragment mapFragment = new TripNavigationMapFragment();
+                    mapFragment.setTripId(items.get(position).getId());
                     mapFragment.setPointsList(items.get(position).getPlaces());
 
                     getChildFragmentManager().beginTransaction()
                             .replace(R.id.all_trips_layout, mapFragment)
                             .commit();
                     break;
-                case R.id.row_place_delete_btn :
+                case R.id.row_place_view_on_map_btn:
+                    CustomMapFragment<Place> fragment = new CustomMapFragment<>();
+                    fragment.setPointsList(items.get(position).getPlaces());
+
+                    getChildFragmentManager().beginTransaction()
+                            .replace(R.id.all_trips_layout, fragment)
+                            .commit();
+                    break;
+                case R.id.row_place_delete_btn:
                     String title = "Delete trip " + items.get(position).getTitle();
                     String message = "Are you sure you want to delete this trip?";
                     SimpleDialogBuilder dialogBuilder = new SimpleDialogBuilder(getContext(), title, message);

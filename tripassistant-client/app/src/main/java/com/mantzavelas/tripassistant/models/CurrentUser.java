@@ -5,7 +5,8 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.support.v4.app.ActivityCompat;
+
+import androidx.core.app.ActivityCompat;
 
 public class CurrentUser {
 
@@ -35,7 +36,9 @@ public class CurrentUser {
             return;
         }
         Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        setUserLocation(Double.toString(lastLocation.getLatitude()), Double.toString(lastLocation.getLongitude()));
+        if (lastLocation != null) {
+            setUserLocation(Double.toString(lastLocation.getLatitude()), Double.toString(lastLocation.getLongitude()));
+        }
     }
 
     public void setLoggedInUser(String username, String token) {

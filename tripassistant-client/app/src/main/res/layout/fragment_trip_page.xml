@@ -13,7 +13,7 @@
         android:layout_marginTop="10dp"
         android:text="View all your trips or start a new one!" />
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/all_trips_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -21,7 +21,7 @@
         android:layout_marginTop="40dp"
         android:scrollbars="vertical"/>
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/all_trips_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

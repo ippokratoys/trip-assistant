@@ -10,6 +10,8 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 public class RestClient {
 
     private static final String TRIP_ASSISTANT_API_BASE_URL = "http://83.212.106.175:8081/api/";
+//    private static final String TRIP_ASSISTANT_API_BASE_URL = "http://192.168.1.5:8080/api/";
+
 
     private static RestClient restClient;
     private static Retrofit tripAssistantClient;
