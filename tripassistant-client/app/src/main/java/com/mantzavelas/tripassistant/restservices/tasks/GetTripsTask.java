@@ -52,7 +52,7 @@ public class GetTripsTask extends AsyncTask<TripStatus, Void, Response<List<Trip
 
         List<TripDto> tripDtos;
         if (listResponse != null) {
-            if (listResponse.isSuccessful() && listResponse.body() != null && !listResponse.body().isEmpty()) {
+            if (listResponse.isSuccessful() && listResponse.body() != null) {
                 tripDtos = listResponse.body();
             } else {
                 Toast.makeText(cont, listResponse.message(), Toast.LENGTH_SHORT).show();

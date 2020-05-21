@@ -9,6 +9,8 @@ import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import com.mantzavelas.tripassistantapi.models.UserNotification;
 import com.mantzavelas.tripassistantapi.utils.PropertyUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -17,9 +19,14 @@ public enum FirebaseCloudMessagingService {
 
 	INSTANCE;
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(FirebaseCloudMessagingService.class);
 	private static final String TOKEN_LOCATION = PropertyUtil.getProperty("app.fcm.tokenLocation");
+	private static FirebaseApp app;
 
 	public void initializeSdk() throws IOException {
+		if (app != null) {
+			return;
+		}
 		FileInputStream refreshToken = new FileInputStream(TOKEN_LOCATION);
 
 		FirebaseOptions options = new FirebaseOptions.Builder()
@@ -28,7 +35,7 @@ public enum FirebaseCloudMessagingService {
 //			.setDatabaseUrl("https://" + FIREBASE_DATABASE_NAME + ".firebaseio.com")
 			.build();
 
-		FirebaseApp.initializeApp(options);
+		app = FirebaseApp.initializeApp(options, "trip-assistant");
 	}
 
 	public String sendSingleMessage(String deviceToken, UserNotification notification) throws FirebaseMessagingException {
@@ -37,8 +44,8 @@ public enum FirebaseCloudMessagingService {
 			.setToken(deviceToken)
 			.build();
 
-		String response = FirebaseMessaging.getInstance().send(message);
-		System.out.println("Sent FCM message: " + response);
+		String response = FirebaseMessaging.getInstance(app).send(message);
+		LOGGER.info("Sent FCM message: " + response);
 
 		return response;
 	}

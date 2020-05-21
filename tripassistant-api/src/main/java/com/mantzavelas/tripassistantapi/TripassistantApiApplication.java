@@ -27,11 +27,11 @@ public class TripassistantApiApplication extends SpringBootServletInitializer {
 		photoServiceThread.start();
 		Thread categoryTagging = new Thread(new CategoryTaggingThread());
 		categoryTagging.start();
+
+		new UserNotificationReceiver();
 		Thread userNotifierThread = new Thread(new UserTripNotifierThread());
 		userNotifierThread.start();
 		new PopularSeasonPlaceRpcServer().initRpcServer();
-
-		new UserNotificationReceiver();
 	}
 
 }

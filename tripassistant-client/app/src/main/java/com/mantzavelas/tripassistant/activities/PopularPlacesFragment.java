@@ -2,7 +2,8 @@ package com.mantzavelas.tripassistant.activities;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -11,7 +12,7 @@ import com.mantzavelas.tripassistant.restservices.tasks.PopularPlacesTask;
 
 public class PopularPlacesFragment extends CustomMapFragment<PopularPlaceDto> implements OnMapReadyCallback {
 
-    PopularPlacesTask popularPlacesTask;
+    private PopularPlacesTask popularPlacesTask;
 
     public PopularPlacesFragment() {
     }
@@ -25,7 +26,7 @@ public class PopularPlacesFragment extends CustomMapFragment<PopularPlaceDto> im
     public void onDestroy() {
         super.onDestroy();
 
-        if(!popularPlacesTask.getStatus().equals(AsyncTask.Status.FINISHED)) {
+        if(popularPlacesTask!= null && !popularPlacesTask.getStatus().equals(AsyncTask.Status.FINISHED)) {
             popularPlacesTask.cancel(true);
         }
     }

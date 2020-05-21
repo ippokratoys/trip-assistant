@@ -10,8 +10,9 @@ public class TripPagesStrategies {
 
     static {
         pageStrategies.addAll(Arrays.asList(
-            new TripPageStrategy(new AllTripsFragment()),
-            new TripPageStrategy(new UpComingTripsFragment())
+            new TripPageStrategy(new FutureTripsFragment()),
+            new TripPageStrategy(new UpComingTripsFragment()),
+            new TripPageStrategy(new CompletedTripsFragment())
         ));
     }
 

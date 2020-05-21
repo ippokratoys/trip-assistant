@@ -2,11 +2,14 @@ package com.mantzavelas.tripassistantapi.services;
 
 import com.mantzavelas.tripassistantapi.converters.TripResourceToTripConverter;
 import com.mantzavelas.tripassistantapi.converters.TripToTripDtoConverter;
+import com.mantzavelas.tripassistantapi.dtos.LocationDto;
+import com.mantzavelas.tripassistantapi.dtos.PlaceDto;
 import com.mantzavelas.tripassistantapi.dtos.TripDto;
 import com.mantzavelas.tripassistantapi.exceptions.EmptyResourceFieldException;
 import com.mantzavelas.tripassistantapi.exceptions.PastDateException;
 import com.mantzavelas.tripassistantapi.exceptions.ResourceNotFoundException;
 import com.mantzavelas.tripassistantapi.exceptions.UnauthorizedException;
+import com.mantzavelas.tripassistantapi.math.util.ShortestPlacesPathUtil;
 import com.mantzavelas.tripassistantapi.models.Trip;
 import com.mantzavelas.tripassistantapi.models.User;
 import com.mantzavelas.tripassistantapi.repositories.TripRepository;
@@ -82,7 +85,6 @@ public class TripService {
 
 	private void validateResource(TripResource resource) {
 		if (resource.getTitle() == null || resource.getTitle().isEmpty()) {
-			System.out.println(resource.getTitle());
 			throw new EmptyResourceFieldException("Title can't be empty.");
 		}
 
@@ -122,10 +124,51 @@ public class TripService {
 	@Transactional(rollbackFor = {Exception.class})
 	Consumer<Trip> getTransitionUpcomingTripConsumer() {
 		return trip -> {
-			if (DateUtils.isDateWithinAWeek(trip.getScheduledFor())) {
+			if (DateUtils.isDateWithinAWeek(trip.getScheduledFor()) && Trip.Status.FUTURE.equals(trip.getStatus())) {
 				trip.setStatus(Trip.Status.UPCOMING);
 				tripRepository.save(trip);
 			}
 		};
+	}
+
+	public TripDto startUserTrip(User user, Long tripId, LocationDto currentLocation) {
+		Trip trip = tripRepository.findById(tripId).orElse(null);
+
+		validateTripRequest(user, tripId, trip);
+
+		transitionTripStatus(trip, Trip.Status.RUNNING);
+
+		TripDto tripDto = dtoConverter.convert(trip);
+
+		PlaceDto sourceLocation = new PlaceDto();
+		sourceLocation.setLatitude(currentLocation.getLatitude());
+		sourceLocation.setLongitude(currentLocation.getLongitude());
+		sourceLocation.setTitle("My Location");
+
+		ShortestPlacesPathUtil.sortPlacesForShortestPath(tripDto.getPlaces(), sourceLocation);
+		return tripDto;
+	}
+
+	public void stopTrip(User user, Long tripId) {
+		Trip trip = tripRepository.findById(tripId).orElse(null);
+
+		validateTripRequest(user, tripId, trip);
+
+		transitionTripStatus(trip, Trip.Status.COMPLETED);
+	}
+
+	private void validateTripRequest(User user, Long tripId, Trip trip) {
+		if (trip == null) {
+			throw new ResourceNotFoundException("Trip", tripId);
+		}
+
+		if (!trip.belongsToUser(user)) {
+			throw new UnauthorizedException("Not authorized for this trip");
+		}
+	}
+
+	private void transitionTripStatus(Trip trip, Trip.Status status) {
+		trip.setStatus(status);
+		tripRepository.save(trip);
 	}
 }

@@ -8,10 +8,13 @@ import java.util.List;
 @Entity
 public class Trip implements Serializable {
 
+	private static final long serialVersionUID = 1244036645984216540L;
+
 	public enum Status {
 		FUTURE,
 		UPCOMING,
-		ARCHIVED
+		RUNNING,
+		COMPLETED
 	}
 
 	@Id
@@ -67,4 +70,8 @@ public class Trip implements Serializable {
 
 	public Date getLastNotified() { return lastNotified; }
 	public void setLastNotified(Date lastNotified) { this.lastNotified = lastNotified; }
+
+	public boolean belongsToUser(User otherUser) {
+		return this.user.equals(otherUser);
+	}
 }

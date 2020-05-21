@@ -3,8 +3,9 @@ package com.mantzavelas.tripassistant.activities.helpers;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentManager;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 
 import com.mantzavelas.tripassistant.R;
 import com.mantzavelas.tripassistant.activities.LoginFragment;

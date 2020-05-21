@@ -1,9 +1,6 @@
 package com.mantzavelas.tripassistant.adapters;
 
 import android.graphics.Typeface;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.AppCompatImageButton;
-import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
@@ -12,6 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageButton;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.mantzavelas.tripassistant.R;
 import com.mantzavelas.tripassistant.restservices.dtos.TripDto;
@@ -23,15 +24,17 @@ public class TripsAdapter extends RecyclerView.Adapter<TripsAdapter.TripViewHold
 
     private List<TripDto> trips;
     private RecyclerViewClickListener listener;
+    private boolean displayMidButton;
 
     private static final String TITLE_TOKEN = "Title: ";
     private static final String DESCRIPTION_TOKEN = "Description: ";
     private static final String DATE_SCHEDULED_TOKEN = "Date Scheduled: ";
     private static final String TOTAL_PLACES_TOKEN = "Places: ";
 
-    public TripsAdapter(List<TripDto> trips, RecyclerViewClickListener listener) {
+    public TripsAdapter(List<TripDto> trips, RecyclerViewClickListener listener, boolean displayMiddleButton) {
         this.trips = trips;
         this.listener = listener;
+        this.displayMidButton = displayMiddleButton;
     }
 
     public void setDataSet(List<TripDto> trips) {
@@ -54,6 +57,9 @@ public class TripsAdapter extends RecyclerView.Adapter<TripsAdapter.TripViewHold
         tripViewHolder.setDescription(constructBoldText(DESCRIPTION_TOKEN, trip.getDescription()));
         tripViewHolder.setDateScheduled(constructBoldText(DATE_SCHEDULED_TOKEN, trip.getScheduledFor().toString()));
         tripViewHolder.setTotalPlaces(constructBoldText(TOTAL_PLACES_TOKEN, String.valueOf(trip.getPlaces().size())));
+        if (!displayMidButton) {
+            tripViewHolder.middleButton.setVisibility(View.GONE);
+        }
     }
 
     private SpannableStringBuilder constructBoldText(String bold, String text) {
@@ -80,6 +86,7 @@ public class TripsAdapter extends RecyclerView.Adapter<TripsAdapter.TripViewHold
         private TextView dateScheduled;
         private TextView totalPlaces;
         private Button detailsButton;
+        private Button middleButton;
         private Button viewOnMapButton;
         private AppCompatImageButton deleteButton;
         private WeakReference<RecyclerViewClickListener> clickListenerRef;
@@ -104,11 +111,13 @@ public class TripsAdapter extends RecyclerView.Adapter<TripsAdapter.TripViewHold
             dateScheduled = itemView.findViewById(R.id.row_place_date_scheduled);
             totalPlaces = itemView.findViewById(R.id.row_place_total_places);
             detailsButton = itemView.findViewById(R.id.row_place_details_btn);
+            middleButton = itemView.findViewById(R.id.row_place_middle_btn);
             viewOnMapButton = itemView.findViewById(R.id.row_place_view_on_map_btn);
             deleteButton = itemView.findViewById(R.id.row_place_delete_btn);
             clickListenerRef = new WeakReference<>(listener);
 
             detailsButton.setOnClickListener(this);
+            middleButton.setOnClickListener(this);
             viewOnMapButton.setOnClickListener(this);
             deleteButton.setOnClickListener(this);
         }

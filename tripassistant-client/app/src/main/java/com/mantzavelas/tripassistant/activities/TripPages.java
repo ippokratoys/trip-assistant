@@ -2,8 +2,9 @@ package com.mantzavelas.tripassistant.activities;
 
 public enum TripPages {
 
-    ALL_TRIPS("All Trips"),
-    UPCOMING_TRIPS("Upcoming Trips");
+    FUTURE_TRIPS("Future Trips"),
+    UPCOMING_TRIPS("Upcoming Trips"),
+    COMPLETED_TRIPS("Completed Trips");
 
     TripPages(String name) { this.name = name; }
 
